@@ -2,7 +2,9 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 import sys
+import filecmp
 import sqlite3
 from constants import Constants
 import dlconfig
@@ -24,14 +26,24 @@ class StudentDBManager(object):
             self.esDB_cursor.execute('INSERT INTO cse_students VALUES(%s, "%s")' % (entrance_year, studentID))
         self.esDB.commit()
 
-
     def register_studentIDs(self, root_dir):
         for folder_name in os.listdir(root_dir):
             matcher = Constants.STUDENT_ID_RE.search(folder_name)
             if matcher:
-                #print matcher.group()
                 self.register_studentID(matcher.group())
 
+    def clean_garbage_pages(self, root_dir, index_page):
+        import os.path
+        for folder_name in os.listdir(root_dir):
+            student_path = os.path.join(root_dir, folder_name)
+            if not os.path.isdir(student_path):
+                continue
+            page_1 = os.path.join(student_path, "index.html")
+            page_2 = os.path.join(student_path, "index-j.html")
+            if os.path.isfile(page_1) and os.path.isfile(page_2):
+                is_delete = filecmp.cmp(page_1, index_page) and filecmp.cmp(page_2, index_page)
+                if is_delete:
+                    shutil.rmtree(student_path)
 
     def get_unknown_students(self):
         freshman_entrance_year = StudentIDDownloader.get_year(1, date.today()) #1=freshman
@@ -51,7 +63,6 @@ class StudentDBManager(object):
     def get_estimated_studentIDs_from(self, entrance_year):
         self.esDB_cursor.execute('SELECT studentID FROM cse_students WHERE entrance_year = "%s"' % entrance_year)
         return [studentID[0].encode('utf-8') for studentID in self.esDB_cursor.fetchall()]
-
 
     def close(self):
         self.esDB.close()
@@ -78,6 +89,7 @@ def main():
     """Run an example for a StudentDBManager class."""
     manager = StudentDBManager()
     manager.register_studentIDs("www.cc.kyoto-su.ac.jp")
+    manager.clean_garbage_pages("www.cc.kyoto-su.ac.jp", Constants.KSU_TEMPLATE_INDEX)
     manager.close()
 
     return Constants.EXIT_SUCCESS

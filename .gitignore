@@ -2,10 +2,12 @@
 www.cse.kyoto-su.ac.jp/
 www.cc.kyoto-su.ac.jp/
 
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
+*.swp
 
 # C extensions
 *.so

@@ -15,6 +15,8 @@ class Constants(object):
     PROTOCOL = 'http://'
     STUDENT_ID_RE = re.compile('(g\d{7})')
 
+    KSU_TEMPLATE_INDEX = "ksu_index.html"
+
 def main():
     """Run an example for a Constants class."""
     print Constants.EXIT_SUCCESS
