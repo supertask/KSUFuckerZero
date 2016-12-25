@@ -3,42 +3,44 @@
 
 import sys
 import os
+import re
+import time
+import os.path
 import subprocess
+import filecmp
+import shutil
+import datetime
 from datetime import date
 from constants import Constants
 import dlconfig
+from studentDB_manager import StudentDBManager
 
 """
 Links:
-g0947064
+Nishina san: 947064, Choro: 245009
 http://www.cse.kyoto-su.ac.jp/~g0947343/webcom/
+----
+Gotten using my hand cc.kyoto-su.ac.jp
+----
+2008: g0846002 ~ g0847498: cse
+2009: g0946010 ~ g0947622: cse
+2010: g1044011 ~ g1045344: cse
+2011: g1144010 ~ g1145505: cse: DID!!
+2012: g1244028 ~ g1245397: cse
+----
+Get using cc.kyoto-su.ac.jp
+2013: g1344018 ~ g1345530: cse
+2014: g1444026 ~ g1445548: cse
+2015: g1544016 ~ g1547932: cc (ほぼコン理) , ~g1547572からバグ
+2016: g1648237: cc (総合生命:only one)
 
-http://vaaaaaanquish.hatenablog.com/entry/2016/08/08/160353
-http://qiita.com/howdy39/items/a1aef86fef1ce1b6d778
+2015, 2016のcseを辿る
 """
 
 class StudentIDDownloader(object):
     def __init__(self):
-        self.students = self.get_students(
-            student_type = dlconfig.get_student_type(),
-            department = dlconfig.get_department(),
-            grades = dlconfig.get_grades()
-        )
-        self.last_student_ID = self.trace_last_student("http://www.cc.kyoto-su.ac.jp")
-
-    @classmethod
-    def get_year(self, grade, date_today):
-        """Estimates a year from grade using a date.
-
-        Example:
-            if today -> 2016
-            1,2,3,4 -> 2016,2015,2014,2013
-        """
-        if date_today.month < 4:
-            freshman_year = date_today.year - 1
-        else:
-            freshman_year = date_today.year
-        return freshman_year - grade + 1 
+        #self.last_student_ID = self.trace_last_student("www.cc.kyoto-su.ac.jp")
+        self.db_manager = StudentDBManager()
 
     def compare_sID(self, sID_L, sID_R):
         """
@@ -64,9 +66,7 @@ class StudentIDDownloader(object):
         elif sID_L_2 < sID_R_2: return 1
         else: return -1
 
-
-    def trace_last_student(self, a_url):
-        root_folder = a_url[len(Constants.PROTOCOL):]
+    def trace_last_student(self, root_folder):
         try: folder_names = os.listdir(root_folder)
         except: return None
         student_IDs = []
@@ -74,18 +74,23 @@ class StudentIDDownloader(object):
             matcher = Constants.STUDENT_ID_RE.search(folder_name)
             if matcher:
                 student_IDs.append(matcher.group())
-
         student_IDs.sort(cmp=self.compare_sID)
         return student_IDs[-1]
 
+    def register_students_using_hand(self):
+        self.db_manager.register_studentIDs_ranging("g0846002", "g0847498") #2008
+        self.db_manager.register_studentIDs_ranging("g0946010", "g0947622") #2009
+        self.db_manager.register_studentIDs_ranging("g1044011", "g1045344") #2010
+        self.db_manager.register_studentIDs_ranging("g1144010", "g1145505") #2011
+        self.db_manager.label_downloaded_students("g1144010", "g1145505", datetime.date(2015,07,14))
+        self.db_manager.register_studentIDs_ranging("g1244028", "g1245397") #2012
 
     def get_students(self, student_type, department, grades=[1,2,3,4]):
         students = []
-        date_today = date.today()
         department = str(department)
 
         for a_grade in grades:
-            a_year = str(self.get_year(a_grade, date_today))
+            a_year = str(Constants.get_year(a_grade))
             student_number_head = a_year[-1] + department
             student_ID_head = student_type + a_year[-2:] + department
 
@@ -97,34 +102,81 @@ class StudentIDDownloader(object):
                     students.append([a_grade, student_ID])
         return students
 
+    def clean_garbage_pages(self, root_dir, index_page):
+        for folder_name in os.listdir(root_dir):
+            student_path = os.path.join(root_dir, folder_name)
+            if not os.path.isdir(student_path):
+                continue
+            page_1 = os.path.join(student_path, "index.html")
+            page_2 = os.path.join(student_path, "index-j.html")
+            if os.path.isfile(page_1) and os.path.isfile(page_2):
+                is_delete = filecmp.cmp(page_1, index_page) and filecmp.cmp(page_2, index_page)
+                if is_delete:
+                    shutil.rmtree(student_path)
 
     def download_from_urls(self, urls, student_ID):
         for url in urls:
             url = url % student_ID 
-            #print grade, student_ID, url
+            print student_ID, url
             shell_line = ["wget", "-r", "--random-wait", "--exclude-directories=%s" % dlconfig.get_exclude_dirs(), url]
             #subprocess.call(shell_line)
 
+    #Phase 1
+    def determine_studentID(self):
+        """Downloads index pages from "cc.kyoto-su.ac.jp" for ensuring whether a student id is currect.
+        """
+        unknown_grades = self.db_manager.get_unknown_grades()
+        students = self.get_students(
+            student_type = Constants.STUDENT_TYPE,
+            department = Constants.DEPARTMENT,
+            grades = unknown_grades
+        )
 
-    def download(self):
-        for grade, student_ID in self.students:
-            print student_ID,
+        start = time.time()
+        MIN_10, MIN_20 = 60 * 10, 60 * 20
+        for grade, studentID in students:
+            if  time.time() - start > MIN_20:
+                time.sleep(MIN_10) #10min
+                start = time.time()
+            self.download_from_urls(dlconfig.get_urls_for_studentID(), studentID)
+
+        matcher = Constants.URL_RE.search(dlconfig.get_urls_for_studentID()[0])
+        CC_URL = matcher.group(1)
+        self.db_manager.register_estimated_studentIDs(CC_URL) #Important!
+        self.clean_garbage_pages(CC_URL, Constants.KSU_TEMPLATE_INDEX)
+
+    #Phase2
+    def download_all(self):
+        students = self.db_manager.get_not_traced_students()
+        print students
+        
+        for grade, student_ID in students:
+            self.download_from_urls(dlconfig.get_urls(grade), student_ID)
             if self.last_student_ID:
                 if self.compare_sID(self.last_student_ID, student_ID) == 0: print
                 if self.compare_sID(self.last_student_ID, student_ID) > 0:
                     continue
-            self.download_from_urls(dlconfig.get_urls(grade), student_ID)
-        print
         print "Finished"
 
 
 def main():
     """Run an example for a studentIDGetter class."""
-
     sID_getter = StudentIDDownloader()
-    sID_getter.download()
-    #print "Number of student: ", len(students)
-    #print self.last_student_ID
+
+    #
+    # Use it if you want to create an estimated student DB without using your hand.
+    #
+    #sID_getter.determine_studentID()
+
+    #
+    # Use it if you want to create an estimated student DB using your hand.
+    #
+    #sID_getter.register_students_using_hand()
+
+    #
+    # Download all student data using an estimated student DB above.
+    #
+    sID_getter.download_all()
 
     return Constants.EXIT_SUCCESS
 

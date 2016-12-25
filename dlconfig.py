@@ -1,11 +1,5 @@
-# 'g'=bachelor or 'i'=master
-student_type = 'g'
-
-# Probably, 4 is for computer science department.
-department = 4 
-
 # Grades that you want to download.
-grades = [1,2,3,4]
+#grades = [1,2,3,4]
 
 # An entered year of oldest OB
 entrance_year_of_oldestOB = 2008
@@ -14,14 +8,21 @@ entrance_year_of_oldestOB = 2008
 estimated_cse_student_DB = "DB/estimated_cse_student_DB.db"
 cse_student_DB = "DB/cse_student_DB.db"
 
+# Used for determining a student id
+# Do not change this arguments as much as possible.
 urls_for_studentID = [
     "http://www.cc.kyoto-su.ac.jp/~%s/",
     "http://www.cc.kyoto-su.ac.jp/~%s/index-j.html"
 ]
 
 urls_for_eachyear = [
-    urls_for_studentID,
+    #Freshman, first year student
     None,
+
+    #Sophomore, second year student
+    None, 
+
+    #Junior, third year student
     [
         "http://www.cse.kyoto-su.ac.jp/~%s/",
         "http://www.cse.kyoto-su.ac.jp/~%s/index-j.html",
@@ -38,24 +39,20 @@ urls_for_eachyear = [
         "http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-4.html",
         "http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-6.html",
     ],
+
+    #Senior, fourth year student
     None
 ]
+
+# Ignore this directories when student infos are downloaded
 exclude_directories = "~mina,~tamada,~ogihara,~naohaya,~atsushi,~akiyama,~ueda,~hidehiko,~kano,~kawai,~torikai,~oomoto,~hiraishi,circle"
 
-def get_estimated_cse_student_DB():
-    return estimated_cse_student_DB
 
-def get_cse_student_DB():
-    return cse_student_DB
-
-def get_student_type():
-    return student_type
-
-def get_department():
-    return department
-
-def get_grades():
-    return grades
+def get_estimated_cse_student_DB(): return estimated_cse_student_DB
+def get_cse_student_DB(): return cse_student_DB
+#def get_student_type(): return student_type
+#def get_department(): return department
+#def get_grades(): return grades
 
 def get_urls(grade):
     urls = []
@@ -63,8 +60,5 @@ def get_urls(grade):
         if u: urls+=u
     return urls
 
-def get_urls_for_studentID():
-    return urls_for_studentID
-
-def get_exclude_dirs():
-    return exclude_directories
+def get_urls_for_studentID(): return urls_for_studentID
+def get_exclude_dirs(): return exclude_directories
