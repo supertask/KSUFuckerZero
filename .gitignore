@@ -2,6 +2,9 @@
 www.cse.kyoto-su.ac.jp/
 www.cc.kyoto-su.ac.jp/
 
+# Database
+sample1.db
+sample2.db
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

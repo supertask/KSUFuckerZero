@@ -13,38 +13,16 @@ import datetime
 from datetime import date
 from constants import Constants
 import dlconfig
-from studentDB_manager import StudentDBManager
+from studentDB_manager import EstimatedStudentDBManager
 
-"""
-Links:
-Nishina san: 947064, Choro: 245009
-http://www.cse.kyoto-su.ac.jp/~g0947343/webcom/
-----
-Gotten using my hand cc.kyoto-su.ac.jp
-----
-2008: g0846002 ~ g0847498: cse
-2009: g0946010 ~ g0947622: cse
-2010: g1044011 ~ g1045344: cse
-2011: g1144010 ~ g1145505: cse: DID!!
-2012: g1244028 ~ g1245397: cse
-----
-Get using cc.kyoto-su.ac.jp
-2013: g1344018 ~ g1345530: cse
-2014: g1444026 ~ g1445548: cse
-2015: g1544016 ~ g1547932: cc (ほぼコン理) , ~g1547572からバグ
-2016: g1648237: cc (総合生命:only one)
-
-2015, 2016のcseを辿る
-"""
 
 class StudentIDDownloader(object):
     def __init__(self):
         #self.last_student_ID = self.trace_last_student("www.cc.kyoto-su.ac.jp")
-        self.db_manager = StudentDBManager()
+        self.db_manager = EstimatedStudentDBManager(Constants.ESTIMATED_CSE_STUDENT_DB)
 
     def compare_sID(self, sID_L, sID_R):
         """
-
         Args:
             sID_L: a string indicated a student id, 'g\d{7}'
             sID_R: a string indicated a student id, 'g\d{7}'
@@ -82,7 +60,7 @@ class StudentIDDownloader(object):
         self.db_manager.register_studentIDs_ranging("g0946010", "g0947622") #2009
         self.db_manager.register_studentIDs_ranging("g1044011", "g1045344") #2010
         self.db_manager.register_studentIDs_ranging("g1144010", "g1145505") #2011
-        self.db_manager.label_downloaded_students("g1144010", "g1145505", datetime.date(2015,07,14))
+        self.db_manager.label_traced_students_ranging("g1144010", "g1145505", datetime.date(2015,07,14))
         self.db_manager.register_studentIDs_ranging("g1244028", "g1245397") #2012
 
     def get_students(self, student_type, department, grades=[1,2,3,4]):
@@ -119,7 +97,7 @@ class StudentIDDownloader(object):
             url = url % student_ID 
             print student_ID, url
             shell_line = ["wget", "-r", "--random-wait", "--exclude-directories=%s" % dlconfig.get_exclude_dirs(), url]
-            #subprocess.call(shell_line)
+            subprocess.call(shell_line)
 
     #Phase 1
     def determine_studentID(self):
@@ -138,9 +116,9 @@ class StudentIDDownloader(object):
             if  time.time() - start > MIN_20:
                 time.sleep(MIN_10) #10min
                 start = time.time()
-            self.download_from_urls(dlconfig.get_urls_for_studentID(), studentID)
+            self.download_from_urls(Constants.URLS_FOR_DETERMINING_STUDENT_ID, studentID)
 
-        matcher = Constants.URL_RE.search(dlconfig.get_urls_for_studentID()[0])
+        matcher = Constants.DOMAIN_RE.search(URLS_FOR_DETERMINING_STUDENT_ID[0])
         CC_URL = matcher.group(1)
         self.db_manager.register_estimated_studentIDs(CC_URL) #Important!
         self.clean_garbage_pages(CC_URL, Constants.KSU_TEMPLATE_INDEX)
@@ -148,14 +126,11 @@ class StudentIDDownloader(object):
     #Phase2
     def download_all(self):
         students = self.db_manager.get_not_traced_students()
-        print students
-        
-        for grade, student_ID in students:
-            self.download_from_urls(dlconfig.get_urls(grade), student_ID)
-            if self.last_student_ID:
-                if self.compare_sID(self.last_student_ID, student_ID) == 0: print
-                if self.compare_sID(self.last_student_ID, student_ID) > 0:
-                    continue
+        studentIDs = []
+        for grade, studentID in students:
+            #self.download_from_urls(dlconfig.get_urls(grade), studentID)
+            studentIDs.append(studentID)
+        self.db_manager.label_traced_students(studentIDs, Constants.TODAY)
         print "Finished"
 
 

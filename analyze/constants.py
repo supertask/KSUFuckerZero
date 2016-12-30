@@ -13,19 +13,55 @@ class Constants(object):
     EXIT_SUCCESS = 0
     EXIT_FAILURE = 1
 
-    PROTOCOL = 'http://'
     STUDENT_ID_RE = re.compile('(g\d{7})')
-    URL_RE = re.compile('http[s]?://((?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)')
+    DOMAIN_RE = re.compile('http[s]?://((?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)')
+    URL_RE =    re.compile('http\S+')
+    CSE_URL_DIR_RE = re.compile("www\.cse\.kyoto-su\.ac\.jp\/.*(g\d{7})\/(.*)")
+    CSE_DOMAIN_RE = re.compile("www\.cse\.kyoto-su\.ac\.jp")
 
-    KSU_TEMPLATE_INDEX = "ksu_index.html"
+    KSU_TEMPLATE_INDEX = "static/ksu_index.html"
 
+    #
     # 'g'=bachelor or 'i'=master
+    # Ex: g1144704 -> 'g'1144704, i1558129 -> 'i'1558129
+    #
     STUDENT_TYPE = 'g'
 
+    #
     # Probably, 4 is for computer science department.
+    # Ex: g1144704 -> g11'4'4704
+    #
     DEPARTMENT = 4 
 
+    #
+    # A date object indicated today for timestamp, for instance, '2016-12-25'.
+    #
     TODAY = date.today()
+
+    #
+    # This URLs is used for determining a student id.
+    #
+    URLS_FOR_DETERMINING_STUDENT_ID = [
+        "http://www.cc.kyoto-su.ac.jp/~%s/",
+        "http://www.cc.kyoto-su.ac.jp/~%s/index-j.html"
+    ]
+
+    #
+    # An entrance year of oldest OB.
+    #
+    ENTRANCE_YEAR_OF_OLDEST_OB = 2008
+
+    #
+    # Database
+    #
+    ESTIMATED_CSE_STUDENT_DB = "DB/estimated_cse_student_DB.db"
+    CSE_STUDENT_DB = "DB/cse_student_DB.db"
+
+    #
+    #
+    #
+    SPLIT_CHAR = ","
+
 
     @classmethod
     def get_grade(self, year):
@@ -61,7 +97,6 @@ def main():
     print Constants.EXIT_SUCCESS
     print Constants.EXIT_FAILURE
 
-    print Constants.PROTOCOL
     print Constants.STUDENT_ID_RE
 
     #2016,2015,2014,2013 -> 1,2,3,4

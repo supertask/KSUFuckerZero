@@ -7,11 +7,11 @@ import sqlite3
 from constants import Constants
 import dlconfig
 from datetime import date
+from tool import Tool
 
-class StudentDBManager(object):
-    def __init__(self):
-        self.esDB = sqlite3.connect(dlconfig.estimated_cse_student_DB)
-        self.sDB = sqlite3.connect(dlconfig.cse_student_DB)
+class EstimatedStudentDBManager(object):
+    def __init__(self, DB_name):
+        self.esDB = sqlite3.connect(DB_name)
         cursor = self.esDB.cursor()
         cursor.execute('CREATE TABLE IF NOT EXISTS cse_students(entrance_year integer, studentID text, traced_date date)')
 
@@ -33,12 +33,17 @@ class StudentDBManager(object):
         for studentID in self.get_studentIDs_from(begin_sID, end_sID):
             self.register_estimated_studentID(studentID)
 
-    def label_downloaded_students(self, begin_sID, end_sID, traced_date):
+    def label_traced_students_ranging(self, begin_sID, end_sID, traced_date):
         cursor = self.esDB.cursor()
-        for studentID in self.get_studentIDs_from(begin_sID, end_sID):
+        studentIDs = self.get_studentIDs_from(begin_sID, end_sID)
+        self.label_traced_students(studentIDs, traced_date)
+
+    def label_traced_students(self, studentIDs, traced_date):
+        cursor = self.esDB.cursor()
+        for studentID in studentIDs:
             cursor.execute('UPDATE cse_students SET traced_date = ? WHERE studentID = ?', (traced_date, studentID))
         self.esDB.commit()
-
+        
 
     def get_studentIDs_from(self, begin_sID, end_sID):
         studentIDs = []
@@ -52,7 +57,7 @@ class StudentDBManager(object):
 
     def get_unknown_grades(self):
         freshman_entrance_year = Constants.get_year(1) #1=freshman
-        oldest_entrance_year = dlconfig.entrance_year_of_oldestOB
+        oldest_entrance_year = Constants.ENTRANCE_YEAR_OF_OLDEST_OB
 
         unknown_grades = []
         cursor = self.esDB.cursor()
@@ -80,13 +85,35 @@ class StudentDBManager(object):
 
     def close(self):
         self.esDB.close()
-        self.sDB.close()
+
+
+class StudentDBManager(object):
+    def __init__(self, DB_name):
+        self.sDB = sqlite3.connect(DB_name)
+        self.sDB.text_factory = lambda x: unicode(x, "utf-8", "ignore")
+        cursor = self.sDB.cursor()
+        cursor.execute('CREATE TABLE IF NOT EXISTS cse_students(entrance_year integer, studentID text, firstnames text, lastnames text, page_keywords text, page_titles text, page_paths text, image_links text, faceimage_position text, coding_size integer)')
+
+    def register(self, studentID, firstnames, lastnames, page_keywords, page_titles, page_paths, coding_size):
+        entrance_year = int('20' + studentID[1:3])
+        cursor = self.sDB.cursor()
+        cursor.execute('SELECT studentID FROM cse_students WHERE studentID = "%s"' % studentID)
+
+        attributes = [firstnames, lastnames, page_keywords, page_titles, page_paths]
+        firstnames, lastnames, page_keywords, page_titles, page_paths = map(lambda x: Tool.conv_encoding(Constants.SPLIT_CHAR.join(x)), attributes)
+
+        if cursor.fetchall():
+            cursor.execute('UPDATE cse_students SET firstnames=?,lastnames=?,page_keywords=?,page_titles=?,page_paths=?,coding_size=? WHERE studentID = ?', (firstnames, lastnames, page_keywords, page_titles, page_paths, coding_size, studentID))
+        else:
+            cursor.execute('INSERT INTO cse_students VALUES(?,?,?,?,?, ?,?,?,?,?)',(
+                entrance_year, studentID, firstnames, lastnames, page_keywords,
+                page_titles, page_paths, None, None, coding_size
+            ))
+        self.sDB.commit()
 
 
 def test():
-    manager = StudentDBManager()
-    manager.esDB = sqlite3.connect("DB/sample1.db")
-    manager.sDB = sqlite3.connect("DB/sample2.db")
+    manager = EstimatedStudentDBManager("DB/sample1.db")
     manager.register_estimated_studentID("g0811111")
     manager.register_estimated_studentID("g1111116")
     print manager.get_unknown_grades()
@@ -97,7 +124,7 @@ def test():
 
 
 def main():
-    """Run an example for a StudentDBManager class."""
+    """Run an example for a EstimatedStudentDBManager and StudentDBManager class."""
     test()
 
     return Constants.EXIT_SUCCESS
