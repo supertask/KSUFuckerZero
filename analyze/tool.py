@@ -110,10 +110,9 @@ class Tool(object):
                 _, ext = os.path.splitext(a_file)
                 if ext == '.html':
                     path = os.path.join(root, a_file)
-                    matcher = Constants.CSE_URL_DIR_RE.search(path)
+                    matcher = Constants.STUDENT_ID_RE.search(path) #Here
                     if not matcher: return
                     studentID = matcher.group(1)
-                    #print path
                     callback(path, studentID)
                     print path
 

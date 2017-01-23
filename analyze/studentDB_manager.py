@@ -94,21 +94,39 @@ class StudentDBManager(object):
         cursor = self.sDB.cursor()
         cursor.execute('CREATE TABLE IF NOT EXISTS cse_students(entrance_year integer, studentID text, firstnames text, lastnames text, page_keywords text, page_titles text, page_paths text, image_links text, faceimage_position text, coding_size integer)')
 
+
+    def convert_to_string(self, attributes):
+        """Convert a list of a list to a list of string.
+        """
+        return map(lambda x: Tool.conv_encoding(Constants.SPLIT_CHAR.join(x)), attributes)
+
+
     def register(self, studentID, firstnames, lastnames, page_keywords, page_titles, page_paths, coding_size):
         entrance_year = int('20' + studentID[1:3])
         cursor = self.sDB.cursor()
         cursor.execute('SELECT studentID FROM cse_students WHERE studentID = "%s"' % studentID)
-
-        attributes = [firstnames, lastnames, page_keywords, page_titles, page_paths]
-        firstnames, lastnames, page_keywords, page_titles, page_paths = map(lambda x: Tool.conv_encoding(Constants.SPLIT_CHAR.join(x)), attributes)
+        some_attributes = [firstnames, lastnames, page_keywords]
 
         if cursor.fetchall():
-            cursor.execute('UPDATE cse_students SET firstnames=?,lastnames=?,page_keywords=?,page_titles=?,page_paths=?,coding_size=? WHERE studentID = ?', (firstnames, lastnames, page_keywords, page_titles, page_paths, coding_size, studentID))
+            cursor.execute('SELECT firstnames,lastnames,page_keywords,page_titles,page_paths,coding_size FROM cse_students WHERE studentID = "%s"' % studentID)
+            updating_attributes = list(cursor.fetchall()[0])
+
+            for i in range(len(some_attributes)):
+                if updating_attributes[i]:
+                    some_attributes[i] = set(map(Tool.conv_encoding, some_attributes[i]))
+                    attr = set(updating_attributes[i].split(Constants.SPLIT_CHAR)) | some_attributes[i]
+                    updating_attributes[i] = Constants.SPLIT_CHAR.join(attr)
+                else:
+                    some_attributes = self.convert_to_string(some_attributes)
+                    updating_attributes[i] = some_attributes[i]
+
+            updating_attributes[len(some_attributes):] = self.convert_to_string([page_titles, page_paths]) + [coding_size]
+            cursor.execute('UPDATE cse_students SET firstnames=?,lastnames=?,page_keywords=?,page_titles=?,page_paths=?,coding_size=? WHERE studentID = ?', updating_attributes + [studentID])
         else:
-            cursor.execute('INSERT INTO cse_students VALUES(?,?,?,?,?, ?,?,?,?,?)',(
-                entrance_year, studentID, firstnames, lastnames, page_keywords,
-                page_titles, page_paths, None, None, coding_size
-            ))
+            some_attributes += [page_titles, page_paths]
+            some_attributes = self.convert_to_string(some_attributes)
+            all_attributes = [entrance_year, studentID] + some_attributes + [None, None, coding_size]
+            cursor.execute('INSERT INTO cse_students VALUES(?,?,?,?,?, ?,?,?,?,?)', all_attributes)
         self.sDB.commit()
 
 
