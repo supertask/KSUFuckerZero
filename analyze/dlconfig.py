@@ -21,7 +21,7 @@ entrance_years = [2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008]
 # Switch 'True' if you want to download student data, again.
 # Switch 'False' if you want to download student data that you have not downloaded.
 #
-is_download_again = False
+#is_overwrite_DB = False
 
 #
 # Ignore this directories when student infos are downloaded.

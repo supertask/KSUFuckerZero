@@ -40,18 +40,32 @@ def get_face(image_path):
     #minSize – 物体が取り得る最小サイズ．これよりも小さい物体は無視されます
     face_rects = cascade.detectMultiScale(image_gray, scaleFactor=1.1, minNeighbors=1, minSize=(10, 10))
     #return list(get_bigest_face(face_rects))
-    
-    for rect in face_rects:
-        cv2.rectangle(image, tuple(rect[0:2]),tuple(rect[0:2]+rect[2:4]), color=(0, 255, 0), thickness=2)
-        #cv2.imshow("Display window", image)
-        cv2.imwrite("detected.jpg", image)
-        #cv2.waitKey(0)
+    print face_rects
 
+    
+    """
+    rect = max_rect
+    cv2.rectangle(image, tuple(rect[0:2]),tuple(rect[0:2]+rect[2:4]), color=(0, 255, 0), thickness=2)
+    cv2.imwrite("images/detected_1.jpg", image)
+    #cv2.imshow("Display window", image)
+    #cv2.waitKey(0)
+    """
+
+    if len(face_rects) > 0:
+        #検出した顔を囲む矩形の作成
+        for rect in face_rects:
+            cv2.rectangle(image, tuple(rect[0:2]),tuple(rect[0:2]+rect[2:4]), color=(0, 255, 0), thickness=2)
+
+            #認識結果の保存
+            cv2.imwrite("images/detected_1.jpg", image)
+            #cv2.imshow("Display window", image)
+            #cv2.waitKey(0)
+
+get_face(sys.argv[1])
 """
 faces = []
 faces.append(get_face(sys.argv[1]))
 faces.append(get_face(sys.argv[2]))
 print get_bigest_face(faces)
-
 """
-get_face(sys.argv[1])
+

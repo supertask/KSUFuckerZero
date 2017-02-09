@@ -61,6 +61,7 @@ class Tool(object):
         self.print_most_common(files_path, 10)
 
 
+
     class SpamHTMLParser(HTMLParser):
         def __init__(self, studentID, path):
             HTMLParser.__init__(self)
@@ -109,6 +110,25 @@ class Tool(object):
             for a_file in files:
                 _, ext = os.path.splitext(a_file)
                 if ext == '.html':
+                    path = os.path.join(root, a_file)
+                    matcher = Constants.STUDENT_ID_RE.search(path) #Here
+                    if not matcher: return
+                    studentID = matcher.group(1)
+                    callback(path, studentID)
+                    print path
+
+    @classmethod
+    def search_images(self, root_dir, callback):
+        exts = [".jpg", ".jpeg", "png", ".gif", ".tiff", ".bmp"]
+        exts += [ext.upper() for ext in exts]
+        Tool.search_files_of(root_dir, callback, exts)
+
+    @classmethod
+    def search_files_of(self, root_dir, callback, exts):
+        for root, dirs, files in os.walk(root_dir, topdown=False):
+            for a_file in files:
+                _, ext = os.path.splitext(a_file)
+                if ext in exts:
                     path = os.path.join(root, a_file)
                     matcher = Constants.STUDENT_ID_RE.search(path) #Here
                     if not matcher: return

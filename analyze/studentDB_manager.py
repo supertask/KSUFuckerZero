@@ -78,7 +78,7 @@ class EstimatedStudentDBManager(object):
         return [studentID[0].encode('utf-8') for studentID in cursor.fetchall()]
 
 
-    def get_not_traced_students(self):
+    def get_not_traced_students_yet(self):
         cursor = self.esDB.cursor()
         cursor.execute("SELECT entrance_year, studentID FROM cse_students WHERE ifnull(length(traced_date), 0) = 0")
         return [[Constants.get_grade(row_line[0]), row_line[1].encode('utf-8')] for row_line in cursor.fetchall()]
@@ -128,6 +128,55 @@ class StudentDBManager(object):
             all_attributes = [entrance_year, studentID] + some_attributes + [None, None, coding_size]
             cursor.execute('INSERT INTO cse_students VALUES(?,?,?,?,?, ?,?,?,?,?)', all_attributes)
         self.sDB.commit()
+
+
+    def register_images(self, studentID, paths, face_rects):
+        cursor = self.sDB.cursor()
+        updating_attributes = []
+        """
+        updating_attributes.append(Constants.SPLIT_CHAR.join(paths))
+        face_rects = map(str,face_rects)
+        updating_attributes.append(Constants.SPLIT_CHAR.join(face_rects))
+        print updating_attributes
+        """
+
+        cursor.fetchall()[0]
+        cursor.execute('SELECT image_links,faceimage_position FROM cse_students WHERE studentID = "%s"' % studentID)
+        cursor.fetchall()
+        if no_images:
+            cursor.execute('UPDATE cse_students SET image_links=?,faceimage_position=? WHERE studentID = ?', updating_attributes + [studentID])
+        else:
+            rects = faceimage_position.split(Constants.SPLIT_CHAR)
+            for rect in rects:
+                rect = eval(rect)
+                if rect: face_rects.append(rect)
+
+
+            cursor.execute('UPDATE cse_students SET image_links=?,faceimage_position=? WHERE studentID = ?', updating_attributes + [studentID])
+        self.sDB.commit()
+
+
+class KeywordsDBManager(object):
+    def __init__(self, DB_name):
+        self.sDB = sqlite3.connect(DB_name)
+        self.sDB.text_factory = lambda x: unicode(x, "utf-8", "ignore")
+        cursor = self.sDB.cursor()
+        cursor.execute('CREATE TABLE IF NOT EXISTS cse_students(keyword text, studentIDs text')
+
+    # Here
+    def register(self, studentID, keywords):
+        for keyword in keywords:
+            cursor = self.sDB.cursor()
+            cursor.execute('SELECT studentIDs FROM student_keywords WHERE keyword = "%s"' % keyword)
+
+            if cursor.fetchone():
+                studentIDs = cursor.fetchone().split(Constants.SPLIT_CHAR)
+                #cursor.execute('UPDATE cse_students SET firstnames=?,lastnames=?,page_keywords=?,page_titles=?,page_paths=?,coding_size=? WHERE studentID = ?', updating_attributes + [studentID])
+            else:
+                studentIDs = []
+                #cursor.execute('INSERT INTO cse_students VALUES(?,?,?,?,?, ?,?,?,?,?)', all_attributes)
+            studentIDs.append(studentID)
+            studentIDs_line = Constants.SPLIT_CHAR.join(studentIDs)
 
 
 def test():

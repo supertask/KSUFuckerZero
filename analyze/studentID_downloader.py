@@ -21,6 +21,9 @@ class StudentIDDownloader(object):
         #self.last_student_ID = self.trace_last_student("www.cc.kyoto-su.ac.jp")
         self.db_manager = EstimatedStudentDBManager(Constants.ESTIMATED_CSE_STUDENT_DB)
 
+    def get_db_manager(self):
+        return self.db_manager
+
     def compare_sID(self, sID_L, sID_R):
         """
         Args:
@@ -54,14 +57,6 @@ class StudentIDDownloader(object):
                 student_IDs.append(matcher.group())
         student_IDs.sort(cmp=self.compare_sID)
         return student_IDs[-1]
-
-    def register_students_using_hand(self):
-        self.db_manager.register_studentIDs_ranging("g0846002", "g0847498") #2008
-        self.db_manager.register_studentIDs_ranging("g0946010", "g0947622") #2009
-        self.db_manager.register_studentIDs_ranging("g1044011", "g1045344") #2010
-        self.db_manager.register_studentIDs_ranging("g1144010", "g1145505") #2011
-        self.db_manager.label_traced_students_ranging("g1144010", "g1145505", datetime.date(2015,07,14))
-        self.db_manager.register_studentIDs_ranging("g1244028", "g1245397") #2012
 
     def get_students(self, student_type, department, grades=[1,2,3,4]):
         students = []
@@ -125,7 +120,7 @@ class StudentIDDownloader(object):
 
     #Phase2
     def download_all(self):
-        students = self.db_manager.get_not_traced_students()
+        students = self.db_manager.get_not_traced_students_yet()
         studentIDs = []
         for grade, studentID in students:
             #self.download_from_urls(dlconfig.get_urls(grade), studentID)
@@ -133,27 +128,3 @@ class StudentIDDownloader(object):
         self.db_manager.label_traced_students(studentIDs, Constants.TODAY)
         print "Finished"
 
-
-def main():
-    """Run an example for a studentIDGetter class."""
-    sID_getter = StudentIDDownloader()
-
-    #
-    # Use it if you want to create an estimated student DB without using your hand.
-    #
-    #sID_getter.determine_studentID()
-
-    #
-    # Use it if you want to create an estimated student DB using your hand.
-    #
-    #sID_getter.register_students_using_hand()
-
-    #
-    # Download all student data using an estimated student DB above.
-    #
-    sID_getter.download_all()
-
-    return Constants.EXIT_SUCCESS
-
-if __name__ == '__main__':
-    sys.exit(main())

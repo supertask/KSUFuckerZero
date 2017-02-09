@@ -13,6 +13,9 @@ class Constants(object):
     EXIT_SUCCESS = 0
     EXIT_FAILURE = 1
 
+    #
+    # Regular expression for finding any strings.
+    #
     STUDENT_ID_RE = re.compile('(g\d{7})')
     DOMAIN_RE = re.compile('http[s]?://((?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)')
     URL_RE =    re.compile('http\S+')
@@ -56,11 +59,17 @@ class Constants(object):
     #
     ESTIMATED_CSE_STUDENT_DB = "DB/estimated_cse_student_DB.db"
     CSE_STUDENT_DB = "DB/cse_student_DB.db"
+    KEYWORDS_DB = "DB/keywords_DB.db"
+
+    #
+    # A spliting charactor for a list element of the database
+    #
+    SPLIT_CHAR = ","
 
     #
     #
     #
-    SPLIT_CHAR = ","
+    ANALYZING_FOLDERS = ["www.cse.kyoto-su.ac.jp/", "www.cc.kyoto-su.ac.jp/"]
 
 
     @classmethod
@@ -104,14 +113,8 @@ def main():
     print Constants.get_grade(2015)
     print Constants.get_year(1)
     print Constants.get_year(2)
-    assert Constants.get_year(Constants.get_grade(2016)) == 2016
-    assert Constants.get_year(Constants.get_grade(2015)) == 2015
-    assert Constants.get_year(Constants.get_grade(2014)) == 2014
-    assert Constants.get_year(Constants.get_grade(2013)) == 2013
-    assert Constants.get_year(Constants.get_grade(2012)) == 2012
-    assert Constants.get_year(Constants.get_grade(2011)) == 2011
-    assert Constants.get_year(Constants.get_grade(2010)) == 2010
-    assert Constants.get_year(Constants.get_grade(2009)) == 2009
+    for year in [2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008]:
+        assert Constants.get_year(Constants.get_grade(year)) == year
 
     return Constants.EXIT_SUCCESS
 
