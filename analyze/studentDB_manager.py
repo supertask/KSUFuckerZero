@@ -133,13 +133,16 @@ class StudentDBManager(object):
     def register_images(self, studentID, paths, face_rects):
         cursor = self.sDB.cursor()
         updating_attributes = []
-        """
         updating_attributes.append(Constants.SPLIT_CHAR.join(paths))
-        face_rects = map(str,face_rects)
-        updating_attributes.append(Constants.SPLIT_CHAR.join(face_rects))
-        print updating_attributes
-        """
+        face_rects = [str(r).replace(" ","") for r in face_rects]
+        DOUBLE_SPLIT_CHAR = Constants.SPLIT_CHAR + Constants.SPLIT_CHAR
+        #print face_rects
+        updating_attributes.append(DOUBLE_SPLIT_CHAR.join(face_rects))
+        cursor.execute('UPDATE cse_students SET image_links=?,faceimage_position=? WHERE studentID = ?', updating_attributes + [studentID])
+        self.sDB.commit()
 
+        
+        """
         cursor.fetchall()[0]
         cursor.execute('SELECT image_links,faceimage_position FROM cse_students WHERE studentID = "%s"' % studentID)
         cursor.fetchall()
@@ -153,7 +156,7 @@ class StudentDBManager(object):
 
 
             cursor.execute('UPDATE cse_students SET image_links=?,faceimage_position=? WHERE studentID = ?', updating_attributes + [studentID])
-        self.sDB.commit()
+        """
 
 
 class KeywordsDBManager(object):

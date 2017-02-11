@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Required meta tags always come first -->
+    <!-- Required meta tags -->
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<title>京都産業大学 コンピュータ理工学部の学生データベース</title>
 	<meta name = "description" content="コンピュータ理工学部の学生データベースです。コンピュータ理工学部内で作成したWEBサイトをトレースして、データベース化しています。各学年ごとの学生も検索が可能です。" />
@@ -21,7 +21,7 @@
     <script type="text/javascript">
         $(function(){
             $('#ksu_result').masonry({
-                itemSelector: '.ksu_student',
+                itemSelector: '.card',
                 isFitWidth: true,
                 isAnimated: true
             });
@@ -30,39 +30,82 @@
 </head>
 <body>
 
-
 <div id="ksu_result">
-
 <?php
+$SPLIT_CHAR = ",";
+$table_row = NULL;
+function get_names() {
+    global $SPLIT_CHAR;
+    global $table_row;
+    $firstnames = explode($SPLIT_CHAR, $table_row["firstnames"]);
+    $lastnames = explode($SPLIT_CHAR, $table_row["lastnames"]);
+    if ($firstnames[0] === "" && $lastnames[0] === "") {
+        $firstnames = array("???");
+        $lastnames = array("");
+    }
+    else if ($firstnames[0] === "") { $firstnames = array("??"); }
+    else if ($lastnames[0] === "") { $lastnames = array("??"); }
+    return array($firstnames, $lastnames);
+}
+function get_face() {
+    global $SPLIT_CHAR;
+    global $table_row;
+    $face_paths = explode($SPLIT_CHAR, $table_row["image_links"]);
+    $face_rects = explode($SPLIT_CHAR, $table_row["faceimage_position"]); #A bug
+    if ($face_rects[0] === 'None' || $face_rects[0] === '') {
+        return array($face_paths[0], NULL);
+    }
+    else {
+        $face_rect = $face_rects[0];
+        $face_rect = substr($face_rect, 1, strlen($face_rect)-2);
+        echo "<script>console.log('". $face_rect . "');</script>";
+        $face_rect = array_map('intval', explode($SPLIT_CHAR, $face_rect));
+        #echo "<script>console.log('". $face_rect[0] . "');</script>";
+        return array($face_paths[0], $face_rect);
+    }
+}
+function get_face_css() {
+    list($face_path, $face_rect) = get_face();
+    $css_line = "";
+    if (empty($face_path)) { return array("./images/no-user.gif", $css_line); }
+    if ($face_rect) {
+        $width = 300; /* 固定 */
+        $image_size = getimagesize($face_path);
+        $face_position = array($face_rect[0], $face_rect[1]);
+        $face_size = array($face_rect[2], $face_rect[3]);
+
+        $ratio = $width / (float) $face_size[0];
+        $height = $face_size[1] * $ratio;
+        $bg_position = array(-1 * $face_position[0] * $ratio, -1 * $face_position[1] * $ratio);
+        $bg_size = array($image_size[0] * $ratio, $image_size[1] * $ratio);
+        $css_line = sprintf("background-position: %dpx %dpx; background-size:%dpx %dpx; height: %dpx;", (int)$bg_position[0], (int)$bg_position[1], (int)$bg_size[0], (int)$bg_size[1], (int)$height);
+    }
+    return array("http://".$face_path, $css_line);
+}
+
 try {
-    $SPLIT_CHAR = ",";
     $dbh = new PDO("sqlite:analyze/DB/cse_student_DB.db");
-    $table = $dbh->prepare("select firstnames,lastnames,studentID,page_keywords from cse_students");
+    $table = $dbh->prepare("select firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position from cse_students");
     $table->execute();
-    $cnt=0;
 
     while($table_row = $table->fetch())
     {
-        $firstnames = explode($SPLIT_CHAR, $table_row["firstnames"]);
-        $lastnames = explode($SPLIT_CHAR, $table_row["lastnames"]);
-        if ($firstnames[0] === "" && $lastnames[0] === "") {
-            $firstnames = array("???");
-            $lastnames = array("");
-        }
-        else if ($firstnames[0] === "") { $firstnames = array("??"); }
-        else if ($lastnames[0] === "") { $lastnames = array("??"); }
+        list($firstnames, $lastnames) = get_names();
+        list($image_path, $css_line) = get_face_css();
         $top_keywords = array_slice(explode($SPLIT_CHAR, $table_row["page_keywords"]), 0, 15);
         $studentID = $table_row["studentID"];
         $cse_url = "http://www.cse.kyoto-su.ac.jp/~" . $studentID . "/";
         $cc_url = "http://www.cc.kyoto-su.ac.jp/~" . $studentID . "/";
+        #echo "<script>console.log('". $face_rect . "');</script>";
 ?>
-
-
-        <div class="ksu_student">
         <div class="card">
-            <!--<img class="card-img-top" src="https://u.o0bc.com/avatars/stock/_no-user-image.gif" alt="A student face">-->
-            <!--<img src="images/neko.jpg" alt="A student face" />-->
-            <div class="image_flame" style="background-image: url('images/b.jpg');"></div>
+            <?php
+            if(empty($css_line)) {
+                echo "<img class='picture' src='" . $image_path . "' style='width:300px;' />";
+            } else {
+                echo "<div class='face' style='background-image: url('".$image_path.");" . $css_line ."'></div>";
+            }
+            ?>
             <div class="card-block">
                 <h4 class="card-title"><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
                 <div class="card-text">
@@ -79,12 +122,7 @@ try {
                 <a href="<?php echo $cc_url?>" class="card-link" target="_blank">CCページ</a>
             </div>
         <!-- .card --></div>
-        <!-- .ksu_student --></div>
-
-
 <?php
-        //if (($cnt+1) % 3 == 0) { echo "<div style=\"content: '.'; display:block; visibility:hidden; clear:both; height:0; font-size:0\"></div>"; }
-        $cnt++;
     }
 }
 Catch(PODException $e) {

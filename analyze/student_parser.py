@@ -4,12 +4,19 @@
 import re
 import sys
 import os
-import cv2
 import MeCab
+import dlib
+import traceback
+import os.path
+from skimage import io
 from HTMLParser import HTMLParser
 from constants import Constants
 from tool import Tool
 from studentDB_manager import StudentDBManager
+
+import cv2
+import numpy
+import subprocess
 
 class StudentHTMLParser(HTMLParser):
     def __init__(self, page_path):
@@ -67,16 +74,6 @@ class StudentAnalyzer(object):
         self.page_paths = []
         self.page_size = 0
 
-        #
-        # To analyze images
-        #
-        # HAAR分類器の顔検出用の特徴量
-        self.cascade_paths = [
-            "/opt/local/share/OpenCV/haarcascades/haarcascade_frontalface_default.xml" #Correct
-            #"/opt/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml",  #Wrong face
-            #"/opt/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt2.xml", #Correct
-            #"/opt/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt_tree.xml" #No face
-        ]
         self.image_paths = []
 
     def get_db_manger(self):
@@ -136,10 +133,8 @@ class StudentAnalyzer(object):
 ##############################################
 
     def __save_image_features(self):
-        face_rects = self.get_face_rects(self.image_paths)
-        #print self.image_paths
-        #print face_rects
-        self.db_manager.register_images(self.back_studentID, self.image_paths, face_rects)
+        paths,face_rects = self.get_faces(self.image_paths)
+        self.db_manager.register_images(self.back_studentID, paths, face_rects)
         self.clear_features()
 
 
@@ -166,34 +161,39 @@ class StudentAnalyzer(object):
                 max_rect = rect
         return max_rect
 
+    #Here
     def get_face(self, image_path):
-        image = cv2.imread(image_path, 0)
-        #image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) #cv2.CASCADE_SCALE_IMAGE
+        """ Here
+        """
+        img = io.imread(image_path)
+        detector = dlib.get_frontal_face_detector()
+        try:
+            dets, scores, idx = detector.run(img) #frontal_face_detectorクラスは矩形, スコア, サブ検出器の結果を返す
+        except:
+            _, ext = os.path.splitext(image_path)
+            #TODO(Tasuku): create a func for animated gif images
+            if ext.upper() == ".GIF": return None
+            subprocess.call(["convert", image_path, image_path])
+            img = io.imread(image_path)
+            try:
+                dets, scores, idx = detector.run(img)
+            except:
+                print "An error happened by dlib,", image_path
+                traceback.print_exc()
+                sys.exit(Constants.EXIT_FAILURE)
 
-        face_rects_on_all_cascades = []
-        for cascade_path in self.cascade_paths:
-            #物体認識（顔認識）の実行
-            #image – CV_8U 型の行列．ここに格納されている画像中から物体が検出されます
-            #objects – 矩形を要素とするベクトル．それぞれの矩形は，検出した物体を含みます
-            #scaleFactor – 各画像スケールにおける縮小量を表します
-            #minNeighbors – 物体候補となる矩形は，最低でもこの数だけの近傍矩形を含む必要があります
-            #flags – このパラメータは，新しいカスケードでは利用されません．古いカスケードに対しては，cvHaarDetectObjects 関数の場合と同じ意味を持ちます
-            #minSize – 物体が取り得る最小サイズ．これよりも小さい物体は無視されます
-            face_rects = cv2.CascadeClassifier(cascade_path).detectMultiScale(image, scaleFactor=1.1, minNeighbors=1, minSize=(15, 15))
-
-            # Too much features are suspicious. Return 'None' immediately.
-            if len(face_rects) > 5: return None
-
-            biggest_rect = self.get_biggest_face_of(face_rects)
-            if biggest_rect is not None:
-                face_rects_on_all_cascades.append(list(biggest_rect))
-
-        biggest_face = self.get_biggest_face_of(face_rects_on_all_cascades)
-        if biggest_face: return list(biggest_face)
-        else: return None
+        if len(dets) > 0:
+            face_rects = []
+            for rect in dets:
+                rect = [rect.left(), rect.top(), rect.right()-rect.left(), rect.bottom()-rect.top()]
+                face_rects.append(rect)
+            biggest_face = self.get_biggest_face_of(face_rects)
+            return biggest_face
+        else:
+            return None
 
 
-    def get_face_rects(self, paths):
+    def get_faces(self, paths):
         face_dict = {}
         pictures = []
         for path in paths:
@@ -206,12 +206,13 @@ class StudentAnalyzer(object):
                 face[3] += padding_px * 2
                 face_dict[path] = face
             else:
-                pictures.append((path, face, ))
+                pictures.append((path, None, ))
 
         faces = sorted(face_dict.items(), key=lambda x:x[1][2] * x[1][3], reverse=True)
         faces_n_pictures = faces + pictures
-        face_rects = [f[1] for f in faces_n_pictures]
-        return face_rects
+        paths = [f[0] for f in faces_n_pictures]
+        rects = [f[1] for f in faces_n_pictures]
+        return paths, rects
 
 
 ##############################################

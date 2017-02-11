@@ -1,39 +1,19 @@
 #ksu_result {
-    /*width: 950px;
-    */
     margin-left: auto;
     margin-right: auto;
 }
 
-#ksu_result .card {
+#ksu_result .card,
+#ksu_result .card .picture,
+#ksu_result .card .face {
     width: 300px;
-    /*float: left;
-    margin-bottom: 20px;
-    margin-right: 10px;
-    */
 }
 
-#ksu_result .card .image_flame {
+#ksu_result .card .picture,
+#ksu_result .card .face {
     background-color: #ccc;
+}
+
+#ksu_result .card .face {
     background-repeat: no-repeat;
-    background-position: -212px -135px;
-    background-size: 835.2px 626.4px;
-    width: 300px; /* 固定 */
-    height: 300px; /* 変動制 */
 }
-
-
-/*
-#ksu_result .card .image_flame {
-    position: relative;
-    height: 300px;
-    overflow: hidden;
-    border: 1px solid red;
-}
-
-#ksu_result .card .image_flame img {
-    position: absolute;
-    margin-top: -338px;
-    margin-left: -170px;
-}
-*/
