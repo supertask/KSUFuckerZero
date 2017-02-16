@@ -14,7 +14,6 @@ from constants import Constants
 from tool import Tool
 from studentDB_manager import StudentDBManager
 
-import cv2
 import numpy
 import subprocess
 

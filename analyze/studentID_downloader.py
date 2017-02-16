@@ -123,7 +123,7 @@ class StudentIDDownloader(object):
         students = self.db_manager.get_not_traced_students_yet()
         studentIDs = []
         for grade, studentID in students:
-            #self.download_from_urls(dlconfig.get_urls(grade), studentID)
+            self.download_from_urls(dlconfig.get_urls(grade), studentID)
             studentIDs.append(studentID)
         self.db_manager.label_traced_students(studentIDs, Constants.TODAY)
         print "Finished"

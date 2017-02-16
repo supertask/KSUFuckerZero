@@ -130,10 +130,6 @@ Catch(PODException $e) {
     die();
 }
 ?>
-
-
-
-
 </body>
 </html>
 
