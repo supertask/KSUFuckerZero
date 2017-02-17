@@ -1,26 +1,37 @@
 version: '2'
 
 services:
-    dlib:
-        image: cameronmaske/docker-dlib
-
-    mecab:
-        image: intimatemerger/mecab
-        
-    mecab-python:
-        image: intimatemerger/mecab-python
-
     app:
         image: python:2-onbuild
         volumes:
             - ".:/home/analyze/"
-        depends_on:
+        volumes_from:
             - dlib
-            - mecab
+            #- mecab
             - mecab-python
-        links:
-            - dlib
-            - mecab
-            - mecab-python
-    #        command:
-    #            python -c "import dlib; import MeCab; print dir(dlib)" #/home/analyze/main.py
+    dlib:
+        image: cameronmaske/docker-dlib
+        volumes:
+            - "/usr/local/lib/python2.7/site-packages/:/usr/local/lib/python2.7/site-packages/"
+
+    mecab-python:
+        image: intimatemerger/mecab-python
+        volumes:
+            - "/usr/local/lib/python2.7/site-packages/:/usr/local/lib/python2.7/site-packages/"
+
+#    mecab:
+#        image: intimatemerger/mecab
+#        volumes:
+#            - "/usr/local/lib/python2.7/site-packages/:/usr/local/lib/python2.7/site-packages/"
+        
+
+#        depends_on:
+#            - dlib
+#            - mecab
+#            - mecab-python
+#        links:
+#            - dlib
+#            - mecab
+#            - mecab-python
+#        command:
+#            python -c "import dlib; import MeCab; print dir(dlib)" #/home/analyze/main.py
