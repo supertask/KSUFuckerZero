@@ -1,0 +1,24 @@
+#face-image {
+    margin-right: 20px;
+}
+#student-info {
+    padding-top: 20px;
+}
+#pictures {
+    margin-bottom: 15px;
+}
+#pictures img.pic {
+    width: 270px;
+}
+
+
+#pages {
+    margin-bottom: 50px;
+}
+#pages a.page {
+    display: block;
+    background-color: #DDD;
+    padding: 10px 20px;
+    border: 1px solid #AAA;
+    width: 200px;
+}

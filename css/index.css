@@ -3,12 +3,6 @@
     margin-right: auto;
 }
 
-#ksu_result .card,
-#ksu_result .card .picture,
-#ksu_result .card .face {
-    width: 300px;
-}
-
 #ksu_result .card .picture,
 #ksu_result .card .face {
     background-color: #ccc;

@@ -9,7 +9,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-	<link href="css/index.css" type="text/css" rel="stylesheet" />
+	<link href="css/student.css" type="text/css" rel="stylesheet" />
 
 
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
@@ -19,18 +19,109 @@
 
     <script type="text/javascript" src="js/masonry.pkgd.min.js"></script>
     <script type="text/javascript">
-        $(function(){
+        $(window).on('load', function() {
             $('#pictures').masonry({
-                itemSelector: '.card',
+                itemSelector: '.pic',
+                isFitWidth: true,
+                isAnimated: true
+            });
+            $('#pages').masonry({
+                itemSelector: '.page',
                 isFitWidth: true,
                 isAnimated: true
             });
         });
     </script>
+
 </head>
 <body>
+
+<?php
+function is_correct_id() {
+    if (isset($_GET["id"]) && preg_match("/([gi][0-9]+)/", $_GET["id"])) return true;
+    return false;
+}
+
+if (is_correct_id()) {
+    $studentID = $_GET["id"];
+    include ("db_manager.php");
+    try {
+        $face_width = 400;
+        $table = get_table_from($studentID);
+        $table->execute(array($studentID));
+        $table_row = $table->fetch();
+        if(isset($table_row)) {
+            list($firstnames, $lastnames) = get_names();
+            list($image_path, $css_line) = get_face_css($face_width);
+            $top_keywords = array_slice(explode($SPLIT_CHAR, $table_row["page_keywords"]), 0, 50);
+            $image_paths = explode($SPLIT_CHAR, $table_row["image_links"]);
+            $page_titles = explode($SPLIT_CHAR, $table_row["page_titles"]);
+            $page_paths = explode($SPLIT_CHAR, $table_row["page_paths"]);
+
+        //var_dump($page_paths);
+        //echo "<br/>";
+        //var_dump($page_titles);
+?>
+
+    <header class="clearfix">
+        <div id="face-image" class="float-left">
+            <?php
+            if(empty($css_line)) {
+                echo "<img src='" . $image_path . "' style='width:" . $face_width . "px;' />";
+            } else {
+                echo "<div style='background-image: url('".$image_path."); style='width:" . $face_width . "px; " . $css_line ."'></div>";
+            }
+            ?>
+        </div>
+
+        <div id="student-info" >
+            <h1><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
+            <div>
+                <?php
+                foreach ($top_keywords as $keyword) {
+                    echo "<span class='badge badge-pill badge-primary'>" . $keyword . "</span>\n";
+                }
+                ?>
+            </div>
+        </div>
+    </header>
+
+    <div id="pictures">
+    <?php
+        $counter = 0;
+        foreach ($image_paths as $image_path) {
+            if ($counter++ == 0) continue;
+            echo "<img class='pic' src='http://" . $image_path . "' />"; //style='width: 320px;'
+        }
+    ?>
+    </div>
+
+    <h2>Pages</h2>
+    <div id="pages">
+    <?php
+        foreach(array_combine($page_titles, $page_paths) as $title => $path) {
+            if (empty($title)) $title = "NON TITLE";
+            echo "<a class='page' href='http://" . $path . "' >" . $title . "</a>"; //style='width: 320px;'
+        }
+    ?>
+    </div>
+<?php
+        }
+        else {
+            echo "NO";
+        }
+    }
+    Catch(PODException $e) {
+        print "Error: ".$e->getMessage()."<br />";
+        die();
+    }
+}
+else {
+    echo "NO";
+}
+?>
+
 
 
 </body>
 </html>
-
