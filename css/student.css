@@ -1,13 +1,25 @@
-#face-image {
+
+header {
+}
+header #face-image {
     margin-right: 20px;
 }
-#student-info {
+header #student-info {
     padding-top: 20px;
 }
-#pictures {
+header #student-info #tags {
+    font-size: 24px;
+}
+
+#pictures_flame {
+    width: 100%;
+    background-color: #888;
+    background-color: rgb(236, 238, 239);
+}
+#pictures_flame #pictures {
     margin-bottom: 15px;
 }
-#pictures img.pic {
+#pictures_flame #pictures img.pic {
     width: 270px;
 }
 

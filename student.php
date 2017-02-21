@@ -50,17 +50,13 @@ if (is_correct_id()) {
         $table = get_table_from($studentID);
         $table->execute(array($studentID));
         $table_row = $table->fetch();
-        if(isset($table_row)) {
+        if(!empty($table_row)) {
             list($firstnames, $lastnames) = get_names();
             list($image_path, $css_line) = get_face_css($face_width);
             $top_keywords = array_slice(explode($SPLIT_CHAR, $table_row["page_keywords"]), 0, 50);
             $image_paths = explode($SPLIT_CHAR, $table_row["image_links"]);
             $page_titles = explode($SPLIT_CHAR, $table_row["page_titles"]);
             $page_paths = explode($SPLIT_CHAR, $table_row["page_paths"]);
-
-        //var_dump($page_paths);
-        //echo "<br/>";
-        //var_dump($page_titles);
 ?>
 
     <header class="clearfix">
@@ -76,7 +72,7 @@ if (is_correct_id()) {
 
         <div id="student-info" >
             <h1><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
-            <div>
+            <div id="tags">
                 <?php
                 foreach ($top_keywords as $keyword) {
                     echo "<span class='badge badge-pill badge-primary'>" . $keyword . "</span>\n";
@@ -86,14 +82,16 @@ if (is_correct_id()) {
         </div>
     </header>
 
-    <div id="pictures">
-    <?php
-        $counter = 0;
-        foreach ($image_paths as $image_path) {
-            if ($counter++ == 0) continue;
-            echo "<img class='pic' src='http://" . $image_path . "' />"; //style='width: 320px;'
-        }
-    ?>
+    <div id="pictures_flame">
+        <div id="pictures">
+        <?php
+            $counter = 0;
+            foreach ($image_paths as $image_path) {
+                if ($counter++ == 0) continue;
+                echo "<img class='pic' src='http://" . $image_path . "' />"; //style='width: 320px;'
+            }
+        ?>
+        </div>
     </div>
 
     <h2>Pages</h2>
@@ -108,7 +106,7 @@ if (is_correct_id()) {
 <?php
         }
         else {
-            echo "NO";
+            echo '<div class="alert alert-danger" role="alert"> <strong>Query error!</strong> No student you input in a database.</div>';
         }
     }
     Catch(PODException $e) {
@@ -117,7 +115,7 @@ if (is_correct_id()) {
     }
 }
 else {
-    echo "NO";
+    echo '<div class="alert alert-danger" role="alert"> <strong>Query error!</strong> Your input of student id is wrong.</div>';
 }
 ?>
 
