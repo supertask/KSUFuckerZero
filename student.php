@@ -103,6 +103,13 @@ if (is_correct_id()) {
     <h2>Pages</h2>
     <div id="pages">
     <?php
+        $diff = sizeof($page_titles) - sizeof($page_paths);
+        if ($diff > 0) {
+            for ($i = 0; $i < $diff; ++$i) array_push($page_paths, "");
+        }
+        else {
+            for ($i = 0; $i < -1 * $diff; ++$i) array_push($page_titles, "");
+        }
         foreach(array_combine($page_titles, $page_paths) as $title => $path) {
             if (empty($title)) $title = "NON TITLE";
             echo "<a class='page' href='http://" . $path . "' >" . $title . "</a>"; //style='width: 320px;'
