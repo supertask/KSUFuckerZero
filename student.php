@@ -31,6 +31,12 @@
                 isAnimated: true
             });
         });
+        $(window).resize(function() {
+            //for
+            //Here
+            console.log($(window).width().toFixed(2) % );
+            console.log();
+        });
     </script>
 
 </head>
