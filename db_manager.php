@@ -51,6 +51,7 @@ function get_face_css($width) {
     if (empty($face_path)) { return array("./images/no-user.gif", $css_line); }
     if ($face_rect) {
         //$width = 300; // 固定
+        //$face_path = "http://" . $face_path;
         $image_size = getimagesize($face_path); #Call a local image
         #echo "<script>console.log('". $face_path . " " . $image_size[0] . " " . $image_size[1] . " ". $image_size[2] . " " . $image_size[3] . "');</script>";
         $face_position = array($face_rect[0], $face_rect[1]);

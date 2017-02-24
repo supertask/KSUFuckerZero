@@ -34,7 +34,7 @@
         $(window).resize(function() {
             //for
             //Here
-            console.log($(window).width().toFixed(2) % );
+            console.log($(window).width().toFixed(2) % 200);
             console.log();
         });
     </script>
@@ -100,7 +100,6 @@ if (is_correct_id()) {
         </div>
     </div>
 
-    <h2>Pages</h2>
     <div id="pages">
     <?php
         $diff = sizeof($page_titles) - sizeof($page_paths);
@@ -112,7 +111,9 @@ if (is_correct_id()) {
         }
         foreach(array_combine($page_titles, $page_paths) as $title => $path) {
             if (empty($title)) $title = "NON TITLE";
-            echo "<a class='page' href='http://" . $path . "' >" . $title . "</a>"; //style='width: 320px;'
+            //echo "<a class='page' href='http://" . $path . "' >" . $title . "</a>"; //style='width: 320px;'
+            //echo '<button type="button" class="btn btn-warning">Warning</button>';
+            echo "<button type='button' class='page btn btn-warning' formtarget='_blank' onclick=\"window.open('http://" . $path . "');\">" . $title . "</button>"; //style='width: 320px;'
         }
     ?>
     </div>
