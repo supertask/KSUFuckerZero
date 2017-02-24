@@ -19,23 +19,29 @@
 
     <script type="text/javascript" src="js/masonry.pkgd.min.js"></script>
     <script type="text/javascript">
+        function resizer(tag, start_width, end_width) {
+            var min_margin = 9999;
+            //var start_width = 300, end_width = 500;
+            var fixed_width = 0;
+            for(var i=0; i<(end_width-start_width); ++i) {
+                var margin = $(window).width().toFixed(2) % (start_width + i);
+                if (margin < min_margin) {
+                    min_margin = margin;
+                    fixed_width = start_width + i;
+                }
+            }
+            $(tag).css("width",fixed_width);
+        }
+        $(window).resize(function(){ resizer("#pictures_flame #pictures img.pic",300,500); });
+        //$(window).resize(function(){ resizer("#pages .page", 240,400); });
+
         $(window).on('load', function() {
+            resizer("#pictures_flame #pictures img.pic",300,500);
             $('#pictures').masonry({
                 itemSelector: '.pic',
                 isFitWidth: true,
                 isAnimated: true
             });
-            $('#pages').masonry({
-                itemSelector: '.page',
-                isFitWidth: true,
-                isAnimated: true
-            });
-        });
-        $(window).resize(function() {
-            //for
-            //Here
-            console.log($(window).width().toFixed(2) % 200);
-            console.log();
         });
     </script>
 
@@ -47,93 +53,91 @@ function is_correct_id() {
     if (isset($_GET["id"]) && preg_match("/([gi][0-9]+)/", $_GET["id"])) return true;
     return false;
 }
+function show_alert($error_name, $error_detail) {
+    echo '<div class="alert alert-danger" role="alert"> <strong>' . $error_name . '</strong> ' . $error_detail . '</div>';
+}
 
 if (is_correct_id()) {
-    $studentID = $_GET["id"];
     include ("db_manager.php");
+    $studentID = $_GET["id"];
+    $table = NULL;
+    $table_row = NULL;
     try {
-        $face_width = 400;
-        $table = get_table_from($studentID);
-        $table->execute(array($studentID));
+        $table = get_table_from(array($studentID));
         $table_row = $table->fetch();
-        if(!empty($table_row)) {
-            list($firstnames, $lastnames) = get_names();
-            list($image_path, $css_line) = get_face_css($face_width);
-            $top_keywords = array_slice(explode($SPLIT_CHAR, $table_row["page_keywords"]), 0, 50);
-            $image_paths = explode($SPLIT_CHAR, $table_row["image_links"]);
-            $page_titles = explode($SPLIT_CHAR, $table_row["page_titles"]);
-            $page_paths = explode($SPLIT_CHAR, $table_row["page_paths"]);
+    }
+    Catch(PODException $e) { die("ReadError: ".$e->getMessage()."<br />"); }
+
+    $face_width = 400;
+    if(!empty($table_row)) {
+        list($firstnames, $lastnames) = get_names();
+        list($image_path, $css_line) = get_face_css($face_width);
+        $top_keywords = array_slice(explode($SPLIT_CHAR, $table_row["page_keywords"]), 0, 50);
+        $image_paths = explode($SPLIT_CHAR, $table_row["image_links"]);
+        $page_titles = explode($SPLIT_CHAR, $table_row["page_titles"]);
+        $page_paths = explode($SPLIT_CHAR, $table_row["page_paths"]);
 ?>
 
-    <header class="clearfix">
-        <div id="face-image" class="float-left">
-            <?php
-            if(empty($css_line)) {
-                echo "<img src='" . $image_path . "' style='width:" . $face_width . "px;' />";
-            } else {
-                echo "<div style='background-image: url('".$image_path."); style='width:" . $face_width . "px; " . $css_line ."'></div>";
-            }
-            ?>
-        </div>
-
-        <div id="student-info" >
-            <h1><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
-            <div id="tags">
+        <header class="clearfix">
+            <div id="face-image" class="float-left">
                 <?php
-                foreach ($top_keywords as $keyword) {
-                    echo "<span class='badge badge-pill badge-primary'>" . $keyword . "</span>\n";
+                if(empty($css_line)) {
+                    echo "<img src='" . $image_path . "' style='width:" . $face_width . "px;' />";
+                } else {
+                    echo "<div style='background-image: url('".$image_path."); style='width:" . $face_width . "px; " . $css_line ."'></div>";
                 }
                 ?>
             </div>
-        </div>
-    </header>
 
-    <div id="pictures_flame">
-        <div id="pictures">
+            <div id="student-info" >
+                <h1><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
+                <div id="tags">
+                    <?php
+                    foreach ($top_keywords as $keyword) {
+                        echo "<span class='badge badge-pill badge-primary'>" . $keyword . "</span>\n";
+                    }
+                    ?>
+                </div>
+            </div>
+        </header>
+
+        <div id="pictures_flame">
+            <div id="pictures">
+            <?php
+                $counter = 0;
+                foreach ($image_paths as $image_path) {
+                    if ($counter++ == 0) continue;
+                    echo "<img class='pic' src='http://" . $image_path . "' />"; //style='width: 320px;'
+                }
+            ?>
+            </div>
+        </div>
+
+        <div id="pages">
         <?php
-            $counter = 0;
-            foreach ($image_paths as $image_path) {
-                if ($counter++ == 0) continue;
-                echo "<img class='pic' src='http://" . $image_path . "' />"; //style='width: 320px;'
+            $diff = sizeof($page_titles) - sizeof($page_paths);
+            if ($diff > 0) {
+                for ($i = 0; $i < $diff; ++$i) array_push($page_paths, "");
+            }
+            else {
+                for ($i = 0; $i < -1 * $diff; ++$i) array_push($page_titles, "");
+            }
+            foreach(array_combine($page_titles, $page_paths) as $title => $path) {
+                if (empty($title)) $title = "NON TITLE";
+                echo "<button type='button' class='page btn btn-warning' formtarget='_blank' onclick=\"window.open('http://" . $path . "');\">" . $title . "</button>"; //style='width: 320px;'
             }
         ?>
         </div>
-    </div>
-
-    <div id="pages">
-    <?php
-        $diff = sizeof($page_titles) - sizeof($page_paths);
-        if ($diff > 0) {
-            for ($i = 0; $i < $diff; ++$i) array_push($page_paths, "");
-        }
-        else {
-            for ($i = 0; $i < -1 * $diff; ++$i) array_push($page_titles, "");
-        }
-        foreach(array_combine($page_titles, $page_paths) as $title => $path) {
-            if (empty($title)) $title = "NON TITLE";
-            //echo "<a class='page' href='http://" . $path . "' >" . $title . "</a>"; //style='width: 320px;'
-            //echo '<button type="button" class="btn btn-warning">Warning</button>';
-            echo "<button type='button' class='page btn btn-warning' formtarget='_blank' onclick=\"window.open('http://" . $path . "');\">" . $title . "</button>"; //style='width: 320px;'
-        }
-    ?>
-    </div>
 <?php
-        }
-        else {
-            echo '<div class="alert alert-danger" role="alert"> <strong>Query error!</strong> No student you input in a database.</div>';
-        }
     }
-    Catch(PODException $e) {
-        print "Error: ".$e->getMessage()."<br />";
-        die();
+    else {
+        show_alert("Query error!", "No student you inputted in a database.");
     }
 }
 else {
-    echo '<div class="alert alert-danger" role="alert"> <strong>Query error!</strong> Your input of student id is wrong.</div>';
+    show_alert("Query error!", "You query has been invalid.");
 }
 ?>
-
-
 
 </body>
 </html>

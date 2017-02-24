@@ -20,22 +20,15 @@ header #student-info #tags {
 #pictures_flame #pictures {
 }
 #pictures_flame #pictures img.pic {
-    width: 270px;
 }
-
 
 #pages {
-    margin-top: 15px;
-    margin-bottom: 50px;
+    margin-top: 20px;
+    padding: 0px 12px;
+    margin-bottom: 70px;
 }
 #pages .page {
-white-space: normal;
-    width: 250px;
-    margin-bottom: 10px;
+    white-space: normal;
     margin-right: 10px;
-/*
-    background-color: #DDD;
-    padding: 10px 20px;
-    border: 1px solid #AAA;
-*/
+    margin-bottom: 10px;
 }

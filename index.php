@@ -33,52 +33,54 @@
 <div id="ksu_result">
 <?php
 include ("db_manager.php");
+$table = NULL;
+$table_row = NULL;
 
-try {
-    $table = get_table();
-    $table->execute();
+try { $table = get_table(); }
+Catch(PODException $e) { die("ReadError: ".$e->getMessage()."<br />"); }
 
-    while($table_row = $table->fetch())
-    {
-        $face_width = 300;
-        list($firstnames, $lastnames) = get_names();
-        list($image_path, $css_line) = get_face_css($face_width);
-        $top_keywords = array_slice(explode($SPLIT_CHAR, $table_row["page_keywords"]), 0, 15);
-        $studentID = $table_row["studentID"];
-        $cse_url = "http://www.cse.kyoto-su.ac.jp/~" . $studentID . "/";
-        $cc_url = "http://www.cc.kyoto-su.ac.jp/~" . $studentID . "/";
-        #echo "<script>console.log('". $face_rect . "');</script>";
+try { $table_row = $table->fetch(); }
+Catch(PODException $e) { die("FetchError: ".$e->getMessage()."<br />"); }
+
+
+while($table_row)
+{
+    $face_width = 300;
+    list($firstnames, $lastnames) = get_names();
+    list($image_path, $css_line) = get_face_css($face_width);
+    $top_keywords = array_slice(explode($SPLIT_CHAR, $table_row["page_keywords"]), 0, 15);
+    $studentID = $table_row["studentID"];
+    $cse_url = "http://www.cse.kyoto-su.ac.jp/~" . $studentID . "/";
+    $cc_url = "http://www.cc.kyoto-su.ac.jp/~" . $studentID . "/";
+    #echo "<script>console.log('". $face_rect . "');</script>";
 ?>
-        <div class="card" style="width: <?php echo $face_width; ?>px; ">
+    <div class="card" style="width: <?php echo $face_width; ?>px; ">
+        <?php
+        if(empty($css_line)) {
+            echo "<img src='" . $image_path . "' style='width:" . $face_width . "px;' />";
+        } else {
+            echo "<div style='background-image: url('".$image_path."); style='width:" . $face_width . "px; " . $css_line ."'></div>";
+        }
+        ?>
+        <div class="card-block">
+            <h4 class="card-title"><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
+            <div class="card-text">
             <?php
-            if(empty($css_line)) {
-                echo "<img src='" . $image_path . "' style='width:" . $face_width . "px;' />";
-            } else {
-                echo "<div style='background-image: url('".$image_path."); style='width:" . $face_width . "px; " . $css_line ."'></div>";
-            }
+                foreach ($top_keywords as $keyword) {
+                    echo "<span class='badge badge-pill badge-primary'>" . $keyword . "</span>\n";
+                }
             ?>
-            <div class="card-block">
-                <h4 class="card-title"><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
-                <div class="card-text">
-                <?php
-                    foreach ($top_keywords as $keyword) {
-                        echo "<span class='badge badge-pill badge-primary'>" . $keyword . "</span>\n";
-                    }
-                ?>
-                </div>
             </div>
-            <div class="card-block">
-                <a href="student.php?id=<?php echo $studentID; ?>" class="card-link">詳細</a>
-                <a href="<?php echo $cse_url; ?>" class="card-link" target="_blank">CSEページ</a>
-                <a href="<?php echo $cc_url; ?>" class="card-link" target="_blank">CCページ</a>
-            </div>
-        <!-- .card --></div>
+        </div>
+        <div class="card-block">
+            <a href="student.php?id=<?php echo $studentID; ?>" class="card-link">詳細</a>
+            <a href="<?php echo $cse_url; ?>" class="card-link" target="_blank">CSEページ</a>
+            <a href="<?php echo $cc_url; ?>" class="card-link" target="_blank">CCページ</a>
+        </div>
+    <!-- .card --></div>
 <?php
-    }
-}
-Catch(PODException $e) {
-    print "Error: ".$e->getMessage()."<br />";
-    die();
+    try { $table_row = $table->fetch(); }
+    Catch(PODException $e) { die("FetchError: ".$e->getMessage()."<br />"); }
 }
 ?>
 </body>
