@@ -5,12 +5,16 @@ function get_db() {
 
 function get_table() {
     $dbh = get_db();
-    return $dbh->prepare("select firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position from cse_students");
+    $table = $dbh->prepare("select firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position from cse_students");
+    $table->execute();
+    return $table;
 }
 
-function get_table_from() {
+function get_table_from($exec_array) {
     $dbh = get_db();
-    return $dbh->prepare("select firstnames,lastnames,page_keywords,image_links,faceimage_position,page_titles,page_paths from cse_students where studentID = ?");
+    $table = $dbh->prepare("select firstnames,lastnames,page_keywords,image_links,faceimage_position,page_titles,page_paths from cse_students where studentID = ?");
+    $table->execute($exec_array);
+    return $table;
 }
 
 $SPLIT_CHAR = ",";
