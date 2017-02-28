@@ -96,6 +96,7 @@ while($table_row)
     list($firstnames, $lastnames) = get_names();
     list($image_path, $css_line) = get_face_css($face_width);
     $top_keywords = array_slice(explode($SPLIT_CHAR, $table_row["page_keywords"]), 0, 15);
+    $entrance_year = $table_row["entrance_year"];
     $studentID = $table_row["studentID"];
     $cse_url = "http://www.cse.kyoto-su.ac.jp/~" . $studentID . "/";
     $cc_url = "http://www.cc.kyoto-su.ac.jp/~" . $studentID . "/";
@@ -110,7 +111,7 @@ while($table_row)
         }
         ?>
         <div class="card-block">
-            <h4 class="card-title"><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
+            <h3 class="card-title" style="font-size: 22px;"><?php echo $lastnames[0].' '.$firstnames[0]; ?>（<?php echo get_grade_name(get_grade(intval($entrance_year))); ?>）</h3>
             <div class="card-text">
             <?php
                 foreach ($top_keywords as $keyword) {

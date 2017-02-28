@@ -7,6 +7,10 @@
  *     if today -> 2016
  *     2016,2015,2014,2013 -> 1,2,3,4
 */
+function get_grade_name($num) {
+    if($num <= 4) { return $num . "回生"; }
+    else { return "OB" . ($num - 4) . "年目"; }
+}
 
 
 function get_freshman_year() {
@@ -29,20 +33,19 @@ function get_db() {
 function get_table($grade_from, $grade_to, $sort_option, $search) {
     $dbh = get_db();
     $entrance_year_range = array(get_entrance_year($grade_to), get_entrance_year($grade_from));
-
-    $sql_statement = "SELECT firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position FROM cse_students WHERE ?<=entrance_year AND entrance_year<=?";
+    $sql_statement = "SELECT entrance_year,firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position FROM cse_students WHERE ?<=entrance_year AND entrance_year<=?";
     #if (!empty($search)) { } //TODO(Tasuku): search function
     if ($sort_option === 0) { $sql_statement .= "ORDER BY coding_size DESC"; }
     else { $sql_statement .= ""; }
-    var_dump($entrance_year_range);
     $table = $dbh->prepare($sql_statement);
     $table->execute($entrance_year_range);
+
     return $table;
 }
 
 function get_table_from($exec_array) {
     $dbh = get_db();
-    $table = $dbh->prepare("SELECT firstnames,lastnames,page_keywords,image_links,faceimage_position,page_titles,page_paths FROM cse_students WHERE studentID = ?");
+    $table = $dbh->prepare("SELECT entrance_year,firstnames,lastnames,page_keywords,image_links,faceimage_position,page_titles,page_paths FROM cse_students WHERE studentID = ?");
     $table->execute($exec_array);
     return $table;
 }
