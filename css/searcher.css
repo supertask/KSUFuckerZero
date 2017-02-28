@@ -1,0 +1,45 @@
+/*
+ * Searcher
+ */
+
+header {
+    padding-top: 110px;
+    background-color: rgb(2, 117, 216);    
+    padding-bottom: 50px;
+}
+
+header form {
+    width: 92%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header form div.row {
+   padding-left: 15px; 
+}
+
+header form h1#brand {
+    color: white;
+    font-size:42px;
+    padding-bottom: 15px;
+}
+
+/*
+ * slider setting
+ */
+#custom-handle-left, #custom-handle-right {
+    width: 5.5em;
+    height: 1.6em;
+    top: 50%;
+    margin-top: -.8em;
+    text-align: center;
+    line-height: 1.6em;
+}
+
+#slider-range {
+    margin-top: 20px;
+}
+
+/*
+ * Radio
+ */

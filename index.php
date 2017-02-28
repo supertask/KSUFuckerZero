@@ -9,26 +9,59 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+
 	<link href="css/index.css" type="text/css" rel="stylesheet" />
 
-
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <!--
     <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+    -->
+    <script src="https://code.jquery.com/jquery-3.1.1.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+	<link href="css/searcher.css" type="text/css" rel="stylesheet" />
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script type="text/javascript" src="js/slider_setting.js"></script>
+
     <script type="text/javascript" src="js/masonry.pkgd.min.js"></script>
-    <script type="text/javascript">
-        $(function(){
-            $('#ksu_result').masonry({
-                itemSelector: '.card',
-                isFitWidth: true,
-                isAnimated: true
-            });
-        });
-    </script>
+    <script type="text/javascript" src="js/grid_setting.js"></script>
 </head>
-<body>
+
+
+<body style="background-color: #F8F8F8;">
+<header>
+    <form method="GET">
+        <h1 id="brand">KSU Fucker</h1>
+        <div class="row">
+            <input class="form-control col col-lg-5 mr-sm-2" type="text" name="search" placeholder="（顔、g1XXXXXXなど）" value="<?php echo $_GET['search']; ?>">
+            <select class="form-control col col-lg-2 mr-sm-2" name="sort-option">
+                <?php
+                    $sorts = array("HTMLサイズ順","五十音順");
+                    #echo "<script>console.log('". sizeof($sorts) . "');</script>";
+                    for ($i=0; $i < sizeof($sorts); $i++) {
+                        if(strval($i) === $_GET["sort-option"]) {
+                            echo "<option selected value=\"" . strval($i) . "\">" . $sorts[$i] . "</option>";
+                        }
+                        else {
+                            echo "<option value=\"" . strval($i) . "\">" . $sorts[$i] . "</option>";
+                        }
+                    }
+                ?>
+            </select>
+            <button class="btn btn-warning" type="submit">検索</button>
+        </div>
+        <div id="slider-range">
+            <div id="custom-handle-left" class="ui-slider-handle"> </div>
+            <div id="custom-handle-right" class="ui-slider-handle"></div>
+            <input type="hidden" id="grade-from" name="grade-from" value="<?php echo $_GET['grade-from']; ?>" />
+            <input type="hidden" id="grade-to" name="grade-to" value="<?php echo $_GET['grade-to']; ?>" />
+        </div>
+   </form>
+</header>
+
+<?php die(); ?>
 
 <div id="ksu_result">
 <?php
