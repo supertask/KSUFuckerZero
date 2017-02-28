@@ -29,19 +29,31 @@
     <script type="text/javascript" src="js/grid_setting.js"></script>
 </head>
 
+<?php
+    $query_search = isset($_GET['search']) ? $_GET['search'] : ""; //search query
+    $query_sort_option = isset($_GET['sort-option']) ? intval($_GET['sort-option']) : 0; //HTML size sorting
+    $query_grade_from = isset($_GET['grade-from']) ? intval($_GET['grade-from']) : 2; //sophomore
+    $query_grade_to = isset($_GET['grade-to']) ? intval($_GET['grade-to']) : 4; //senior
+    /*
+    echo $query_search . "\n";
+    echo $query_sort_option . "\n";
+    echo $query_grade_from . "\n";
+    echo $query_grade_to . "\n";
+    */
+?>
 
 <body style="background-color: #F8F8F8;">
 <header>
     <form method="GET">
         <h1 id="brand">KSU Fucker</h1>
         <div class="row">
-            <input class="form-control col col-lg-5 mr-sm-2" type="text" name="search" placeholder="（顔、g1XXXXXXなど）" value="<?php echo $_GET['search']; ?>">
+            <input class="form-control col col-lg-5 mr-sm-2" type="text" name="search" placeholder="（顔、g1XXXXXXなど）" value="<?php echo $query_search; ?>">
             <select class="form-control col col-lg-2 mr-sm-2" name="sort-option">
                 <?php
                     $sorts = array("HTMLサイズ順","名簿順");
                     #echo "<script>console.log('". sizeof($sorts) . "');</script>";
                     for ($i=0; $i < sizeof($sorts); $i++) {
-                        if(strval($i) === $_GET["sort-option"]) {
+                        if($i === $query_sort_option) {
                             echo "<option selected value=\"" . strval($i) . "\">" . $sorts[$i] . "</option>";
                         }
                         else {
@@ -55,23 +67,14 @@
         <div id="slider-range">
             <div id="custom-handle-left" class="ui-slider-handle"> </div>
             <div id="custom-handle-right" class="ui-slider-handle"></div>
-            <input type="hidden" id="grade-from" name="grade-from" value="<?php echo $_GET['grade-from']; ?>" />
-            <input type="hidden" id="grade-to" name="grade-to" value="<?php echo $_GET['grade-to']; ?>" />
+            <input type="hidden" id="grade-from" name="grade-from" value="<?php echo $query_grade_from; ?>" />
+            <input type="hidden" id="grade-to" name="grade-to" value="<?php echo $query_grade_to; ?>" />
         </div>
    </form>
 </header>
 
 <?php
-    $query_search = isset($_GET['search']) ? $_GET['search'] : "";
-    $query_sort_option = isset($_GET['sort-option']) ? $_GET['sort-option'] : 0;
-    $query_grade_from = isset($_GET['grade-from']) ? $_GET['grade-from'] : 2;
-    $query_grade_to = isset($_GET['grade-to']) ? $_GET['grade-to'] : 4;
-    echo $query_search . "\n";
-    echo $query_sort_option . "\n";
-    echo $query_grade_from . "\n";
-    echo $query_grade_to . "\n";
-
-    die();
+    #die();
 ?>
 
 <div id="ksu_result">
@@ -80,7 +83,7 @@ include ("db_manager.php");
 $table = NULL;
 $table_row = NULL;
 
-try { $table = get_table($grade_from, $grade_to, $sort_option, $search); }
+try { $table = get_table($query_grade_from, $query_grade_to, $query_sort_option, $query_search); }
 Catch(PODException $e) { die("ReadError: ".$e->getMessage()."<br />"); }
 
 try { $table_row = $table->fetch(); }

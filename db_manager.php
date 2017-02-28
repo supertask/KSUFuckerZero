@@ -11,6 +11,7 @@
 
 function get_freshman_year() {
     $freshman_year = 0;
+    date_default_timezone_set('Asia/Tokyo');
     $today_year = intval(date("Y"));
     $today_month = intval(date("m"));
     if ($today_month < 4) { $freshman_year = $today_year - 1; }
@@ -27,11 +28,13 @@ function get_db() {
 
 function get_table($grade_from, $grade_to, $sort_option, $search) {
     $dbh = get_db();
-    $entrance_year_range = array(get_entrance_year($grade_from), get_entrance_year($grade_to));
+    $entrance_year_range = array(get_entrance_year($grade_to), get_entrance_year($grade_from));
+
     $sql_statement = "SELECT firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position FROM cse_students WHERE ?<=entrance_year AND entrance_year<=?";
-    if (!empty($search)) { } //TODO(Tasuku): search function
-    if ($sort_option > 0) { $sql_statement .= "ORDER BY coding_size DESC"; }
+    #if (!empty($search)) { } //TODO(Tasuku): search function
+    if ($sort_option === 0) { $sql_statement .= "ORDER BY coding_size DESC"; }
     else { $sql_statement .= ""; }
+    var_dump($entrance_year_range);
     $table = $dbh->prepare($sql_statement);
     $table->execute($entrance_year_range);
     return $table;
@@ -83,7 +86,7 @@ function get_face_css($width) {
     if ($face_rect) {
         //$width = 300; // 固定
         //$face_path = "http://" . $face_path;
-        $image_size = getimagesize($face_path); #Call a local image
+        $image_size = getimagesize($face_path); #Call a local image(SOS!!!!!!!!!!!!!!!)
         #echo "<script>console.log('". $face_path . " " . $image_size[0] . " " . $image_size[1] . " ". $image_size[2] . " " . $image_size[3] . "');</script>";
         $face_position = array($face_rect[0], $face_rect[1]);
         $face_size = array($face_rect[2], $face_rect[3]);

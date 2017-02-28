@@ -10,27 +10,21 @@ $(function() {
     }
 
     $("#slider-range" ).slider({
-        range: true, min: 1, max: 9,
-        values: [ 2, 4 ],
+        range: true,
+        min: 1,
+        max: 9,
+        values: [
+            input_from.val(),
+            input_to.val()
+        ],
         create: function() {
-            var value  = "";
-            if (input_from.val() === "") { value = $(this).slider("values",0); }
-            else { value = input_from.val(); }
-            input_from.val(value);
-            handle_from.text(get_handle_name(value));
-            $(this).slider('values', 0, value); 
-
-            if (input_to.val() === "") { value = $(this).slider("values",1); }
-            else { value = input_to.val(); }
-            input_to.val(value);
-            handle_to.text(get_handle_name(value));
-            $(this).slider('values', 1, value); 
+            handle_from.text(get_handle_name(input_from.val()));
+            handle_to.text(get_handle_name(input_to.val()));
         },
         slide: function(event, ui) {
             input_from.val(ui.values[0]);
-            handle_from.text(get_handle_name(ui.values[0]));
-
             input_to.val(ui.values[1]);
+            handle_from.text(get_handle_name(ui.values[0]));
             handle_to.text(get_handle_name(ui.values[1]));
         }
     });
