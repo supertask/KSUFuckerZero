@@ -1,18 +1,45 @@
 <?php
+
+/**
+ * Estimates a grade from an entrance year using a date.
+ *
+ * Example:
+ *     if today -> 2016
+ *     2016,2015,2014,2013 -> 1,2,3,4
+*/
+
+
+function get_freshman_year() {
+    $freshman_year = 0;
+    $today_year = intval(date("Y"));
+    $today_month = intval(date("m"));
+    if ($today_month < 4) { $freshman_year = $today_year - 1; }
+    else { $freshman_year = $today_year; }
+
+    return $freshman_year;
+}
+function get_grade($year) { return get_freshman_year() - $year + 1; }
+function get_entrance_year($grade) { return get_freshman_year() - $grade + 1; }
+
 function get_db() {
     return new PDO("sqlite:analyze/DB/cse_student_DB.db");
 }
 
-function get_table() {
+function get_table($grade_from, $grade_to, $sort_option, $search) {
     $dbh = get_db();
-    $table = $dbh->prepare("select firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position from cse_students");
-    $table->execute();
+    $entrance_year_range = array(get_entrance_year($grade_from), get_entrance_year($grade_to));
+    $sql_statement = "SELECT firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position FROM cse_students WHERE ?<=entrance_year AND entrance_year<=?";
+    if (!empty($search)) { } //TODO(Tasuku): search function
+    if ($sort_option > 0) { $sql_statement .= "ORDER BY coding_size DESC"; }
+    else { $sql_statement .= ""; }
+    $table = $dbh->prepare($sql_statement);
+    $table->execute($entrance_year_range);
     return $table;
 }
 
 function get_table_from($exec_array) {
     $dbh = get_db();
-    $table = $dbh->prepare("select firstnames,lastnames,page_keywords,image_links,faceimage_position,page_titles,page_paths from cse_students where studentID = ?");
+    $table = $dbh->prepare("SELECT firstnames,lastnames,page_keywords,image_links,faceimage_position,page_titles,page_paths FROM cse_students WHERE studentID = ?");
     $table->execute($exec_array);
     return $table;
 }
@@ -74,4 +101,10 @@ function get_face_css($width) {
     return array("http://".$face_path, $css_line);
 }
 
+function test() {
+    $start_year=2000;
+    for($i=0; $i<100; $i++) {
+        assert(get_entrance_year(get_grade($start_year+$i)) == $start_year+$i);
+    }
+}
 ?>

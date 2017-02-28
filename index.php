@@ -38,7 +38,7 @@
             <input class="form-control col col-lg-5 mr-sm-2" type="text" name="search" placeholder="（顔、g1XXXXXXなど）" value="<?php echo $_GET['search']; ?>">
             <select class="form-control col col-lg-2 mr-sm-2" name="sort-option">
                 <?php
-                    $sorts = array("HTMLサイズ順","五十音順");
+                    $sorts = array("HTMLサイズ順","名簿順");
                     #echo "<script>console.log('". sizeof($sorts) . "');</script>";
                     for ($i=0; $i < sizeof($sorts); $i++) {
                         if(strval($i) === $_GET["sort-option"]) {
@@ -61,7 +61,18 @@
    </form>
 </header>
 
-<?php die(); ?>
+<?php
+    $query_search = isset($_GET['search']) ? $_GET['search'] : "";
+    $query_sort_option = isset($_GET['sort-option']) ? $_GET['sort-option'] : 0;
+    $query_grade_from = isset($_GET['grade-from']) ? $_GET['grade-from'] : 2;
+    $query_grade_to = isset($_GET['grade-to']) ? $_GET['grade-to'] : 4;
+    echo $query_search . "\n";
+    echo $query_sort_option . "\n";
+    echo $query_grade_from . "\n";
+    echo $query_grade_to . "\n";
+
+    die();
+?>
 
 <div id="ksu_result">
 <?php
@@ -69,7 +80,7 @@ include ("db_manager.php");
 $table = NULL;
 $table_row = NULL;
 
-try { $table = get_table(); }
+try { $table = get_table($grade_from, $grade_to, $sort_option, $search); }
 Catch(PODException $e) { die("ReadError: ".$e->getMessage()."<br />"); }
 
 try { $table_row = $table->fetch(); }
