@@ -1,5 +1,6 @@
 # KSU Fucker
-京都産業大学の学生データベース（工事中）です。[](WEBサイト[KSUFucker](http://ksufucker.heroku.com)にアクセスすると、データベース検索が可能です。)
+京都産業大学の学生データベース（工事中）です。[](WEBサイト[KSUFucker](http://ksufucker.heroku.com)にアクセスすると、データベース検索が可能です。)  
+![KSU Fucker](./images/ksufucker_screen.png)
 
 ## クローラー
 学生データベースは、主に以下のURLを再帰的に辿っていき、クローリングして、データを収集することで作成されています。
