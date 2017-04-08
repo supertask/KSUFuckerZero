@@ -1,5 +1,5 @@
 # KSU Fucker
-京都産業大学の学生データベース（工事中）です。[](WEBサイト[KSUFucker](http://ksufucker.heroku.com)にアクセスすると、データベース検索が可能です。)  
+京都産業大学の学生データベース（工事中）です。WEBサイト[KSUFucker](http://ksufucker.heroku.com)にアクセスすると、データベース検索が可能です。
 ![KSU Fucker](./images/ksufucker_screen.png)
 
 ## クローラー
@@ -10,13 +10,7 @@
 
 実際のところは、一度クローリングした後に、高頻度に出現するページを再度クロールすることによって、できる限り多くのデータを入手することに成功しています。詳しいダウンロード元は、`./analyze/dlconfig.py`に記入されています。
 
-### クローラーの実行方法
-クローラーのプログラムは、`analyze/`ディレクトリの中に入っています。以下のコマンドを実行すると、`./analyze/dlconfig.py`のダウンロードコンフィグ情報を元にクローリングが行われます。
-
-	$ cd analyze/
-	$ python main.py
-
-ダウンロードされたデータは、`www.cse.kyoto-su.ac.jp/`と`www.cc.kyoto-su.ac.jp/`のフォルダ内にダウンロードされ、`analyze/DB/cse_student_DB.db`に情報が記録されます。
+クローラーの詳しい情報は、[こちら](./analyze/README.md)をご覧ください。
 
 ## 動作環境
 - サイト
@@ -25,6 +19,4 @@
 - クローラー
 	- メイン言語: Python
 	- フレームワーク: dlib, MeCab, sqlite3, skimage, numpy, scipy
-
-
-
+    - コマンド: wget
