@@ -63,7 +63,7 @@ if (is_correct_id()) {
     $table = NULL;
     $table_row = NULL;
     try {
-        $table = get_table_from(array($studentID));
+        $table = get_student_table_in_detail(array($studentID));
         $table_row = $table->fetch();
     }
     Catch(PODException $e) { die("ReadError: ".$e->getMessage()."<br />"); }

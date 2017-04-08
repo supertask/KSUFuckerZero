@@ -33,7 +33,7 @@
     $query_search = isset($_GET['search']) ? $_GET['search'] : ""; //search query
     $query_sort_option = isset($_GET['sort-option']) ? intval($_GET['sort-option']) : 0; //HTML size sorting
     $query_grade_from = isset($_GET['grade-from']) ? intval($_GET['grade-from']) : 2; //sophomore
-    $query_grade_to = isset($_GET['grade-to']) ? intval($_GET['grade-to']) : 4; //senior
+    $query_grade_to = isset($_GET['grade-to']) ? intval($_GET['grade-to']) : 9; //senior
     /*
     echo $query_search . "\n";
     echo $query_sort_option . "\n";
@@ -51,8 +51,8 @@
             <select class="form-control col col-lg-2 mr-sm-2" name="sort-option">
                 <?php
                     $sorts = array("HTMLサイズ順","名簿順");
-                    #echo "<script>console.log('". sizeof($sorts) . "');</script>";
-                    for ($i=0; $i < sizeof($sorts); $i++) {
+                    for ($i=0; $i < sizeof($sorts); $i++)
+                    {
                         if($i === $query_sort_option) {
                             echo "<option selected value=\"" . strval($i) . "\">" . $sorts[$i] . "</option>";
                         }
@@ -73,9 +73,6 @@
    </form>
 </header>
 
-<?php
-    #die();
-?>
 
 <div id="ksu_result">
 <?php
@@ -83,7 +80,7 @@ include ("db_manager.php");
 $table = NULL;
 $table_row = NULL;
 
-try { $table = get_table($query_grade_from, $query_grade_to, $query_sort_option, $query_search); }
+try { $table = get_students_table($query_grade_from, $query_grade_to, $query_sort_option, $query_search); }
 Catch(PODException $e) { die("ReadError: ".$e->getMessage()."<br />"); }
 
 try { $table_row = $table->fetch(); }

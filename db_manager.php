@@ -1,5 +1,7 @@
 <?php
 
+$SPLIT_CHAR = ",";
+
 /**
  * Estimates a grade from an entrance year using a date.
  *
@@ -26,16 +28,41 @@ function get_freshman_year() {
 function get_grade($year) { return get_freshman_year() - $year + 1; }
 function get_entrance_year($grade) { return get_freshman_year() - $grade + 1; }
 
-function get_db() {
-    return new PDO("sqlite:analyze/DB/cse_student_DB.db");
-}
-
-function get_table($grade_from, $grade_to, $sort_option, $search) {
-    $dbh = get_db();
+function get_students_table($grade_from, $grade_to, $sort_option, $search) {
+    $dbh = new PDO("sqlite:analyze/DB/cse_student_DB.db");
     $entrance_year_range = array(get_entrance_year($grade_to), get_entrance_year($grade_from));
     $sql_statement = "SELECT entrance_year,firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position FROM cse_students WHERE ?<=entrance_year AND entrance_year<=?";
-    #if (!empty($search)) { } //TODO(Tasuku): search function
-    if ($sort_option === 0) { $sql_statement .= "ORDER BY coding_size DESC"; }
+
+    if (!empty($search)) {
+        $search = str_replace('　', ' ', $search); //全角スペース
+        $keywords = explode(' ', $search);
+        $keyword_db = new PDO('sqlite:analyze/DB/keywords_DB.db');
+
+        $results = array();
+        foreach ($keywords as $keyword)
+        {
+            echo $keyword."<br />";
+            $table = $keyword_db->prepare('SELECT studentIDs FROM student_keywords WHERE keyword = "' . $keyword . '"');
+            $table->execute();
+            $table_row = NULL;
+            try { $table_row = $table->fetch(); }
+            Catch(PODException $e) { die('FetchError: '.$e->getMessage().'<br />'); }
+
+            if (isset($table_row)) {
+                global $SPLIT_CHAR;
+                $studentIDs = explode($SPLIT_CHAR, $table_row['studentIDs']);
+                $results = array_merge($studentIDs, $results);
+                $results = array_unique($results);
+            }
+        }
+        $sql_statement .= ' AND studentID IN(';
+        foreach ($results as $studentID) {
+            $sql_statement .= '"' . $studentID . '", ';
+        } 
+        $sql_statement = rtrim($sql_statement, ', ');
+        $sql_statement .= ')';
+    } 
+    if ($sort_option === 0) { $sql_statement .= " ORDER BY coding_size DESC"; }
     else { $sql_statement .= ""; }
     $table = $dbh->prepare($sql_statement);
     $table->execute($entrance_year_range);
@@ -43,14 +70,13 @@ function get_table($grade_from, $grade_to, $sort_option, $search) {
     return $table;
 }
 
-function get_table_from($exec_array) {
-    $dbh = get_db();
+function get_student_table_in_detail($exec_array) {
+    $dbh = new PDO("sqlite:analyze/DB/cse_student_DB.db");
     $table = $dbh->prepare("SELECT entrance_year,firstnames,lastnames,page_keywords,image_links,faceimage_position,page_titles,page_paths FROM cse_students WHERE studentID = ?");
     $table->execute($exec_array);
     return $table;
 }
 
-$SPLIT_CHAR = ",";
 $table_row = NULL;
 function get_names() {
     global $SPLIT_CHAR;
@@ -90,7 +116,6 @@ function get_face_css($width) {
         //$width = 300; // 固定
         //$face_path = "http://" . $face_path;
         $image_size = getimagesize($face_path); #Call a local image(SOS!!!!!!!!!!!!!!!)
-        #echo "<script>console.log('". $face_path . " " . $image_size[0] . " " . $image_size[1] . " ". $image_size[2] . " " . $image_size[3] . "');</script>";
         $face_position = array($face_rect[0], $face_rect[1]);
         $face_size = array($face_rect[2], $face_rect[3]);
 
@@ -100,9 +125,7 @@ function get_face_css($width) {
         echo "<script>console.log('". $face_path . " " . $image_size[0] . " " . $image_size[1] . " ". $image_size[2] . " " . $image_size[3] . "');</script>";
 
         $bg_size = array($image_size[0] * $ratio, $image_size[1] * $ratio);
-        #echo "<script>console.log('". $face_path . $bg_size[0] . " " . $bg_size[1] . $bg_size[2] . $bg_size[3] . "');</script>";
         $css_line = sprintf("background-position: %dpx %dpx; background-size:%dpx %dpx; height: %dpx;", (int)$bg_position[0], (int)$bg_position[1], (int)$bg_size[0], (int)$bg_size[1], (int)$height);
-        #echo "<script>console.log('". $css_line . "');</script>";
     }
     return array("http://".$face_path, $css_line);
 }

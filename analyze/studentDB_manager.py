@@ -95,11 +95,20 @@ class StudentDBManager(object):
         cursor.execute('CREATE TABLE IF NOT EXISTS cse_students(entrance_year integer, studentID text, firstnames text, lastnames text, page_keywords text, page_titles text, page_paths text, image_links text, faceimage_position text, coding_size integer)')
 
 
+    def create_index_DB(self):
+        keywords_db_manager = KeywordsDBManager(Constants.KEYWORDS_DB)
+        cursor = self.sDB.cursor()
+        cursor.execute('SELECT entrance_year,studentID,firstnames,lastnames,page_keywords,page_titles,page_paths,image_links FROM cse_students')
+        for row in cursor.fetchall():
+            keywords = [str(row[0]), row[1]] + row[2].split(Constants.SPLIT_CHAR) + row[3].split(Constants.SPLIT_CHAR) + row[4].split(Constants.SPLIT_CHAR)
+            keywords_db_manager.register(row[1], keywords)
+        keywords_db_manager.create_index()
+
+
     def convert_to_string(self, attributes):
         """Convert a list of a list to a list of string.
         """
         return map(lambda x: Tool.conv_encoding(Constants.SPLIT_CHAR.join(x)), attributes)
-
 
     def register(self, studentID, firstnames, lastnames, page_keywords, page_titles, page_paths, coding_size):
         entrance_year = int('20' + studentID[1:3])
@@ -141,7 +150,6 @@ class StudentDBManager(object):
         cursor.execute('UPDATE cse_students SET image_links=?,faceimage_position=? WHERE studentID = ?', updating_attributes + [studentID])
         self.sDB.commit()
 
-        
         """
         cursor.fetchall()[0]
         cursor.execute('SELECT image_links,faceimage_position FROM cse_students WHERE studentID = "%s"' % studentID)
@@ -154,32 +162,34 @@ class StudentDBManager(object):
                 rect = eval(rect)
                 if rect: face_rects.append(rect)
 
-
             cursor.execute('UPDATE cse_students SET image_links=?,faceimage_position=? WHERE studentID = ?', updating_attributes + [studentID])
         """
 
-
 class KeywordsDBManager(object):
     def __init__(self, DB_name):
-        self.sDB = sqlite3.connect(DB_name)
-        self.sDB.text_factory = lambda x: unicode(x, "utf-8", "ignore")
-        cursor = self.sDB.cursor()
-        cursor.execute('CREATE TABLE IF NOT EXISTS cse_students(keyword text, studentIDs text')
+        self.kDB = sqlite3.connect(DB_name)
+        self.kDB.text_factory = lambda x: unicode(x, "utf-8", "ignore")
+        cursor = self.kDB.cursor()
+        cursor.execute('CREATE TABLE IF NOT EXISTS student_keywords(keyword text, studentIDs text)')
 
-    # Here
     def register(self, studentID, keywords):
         for keyword in keywords:
-            cursor = self.sDB.cursor()
+            cursor = self.kDB.cursor()
             cursor.execute('SELECT studentIDs FROM student_keywords WHERE keyword = "%s"' % keyword)
-
-            if cursor.fetchone():
-                studentIDs = cursor.fetchone().split(Constants.SPLIT_CHAR)
-                #cursor.execute('UPDATE cse_students SET firstnames=?,lastnames=?,page_keywords=?,page_titles=?,page_paths=?,coding_size=? WHERE studentID = ?', updating_attributes + [studentID])
+            row = cursor.fetchone()
+            if row:
+                studentIDs = row[0].split(Constants.SPLIT_CHAR)
+                studentIDs.append(studentID)
+                studentIDs_line = Constants.SPLIT_CHAR.join(set(studentIDs))
+                cursor.execute('UPDATE student_keywords SET studentIDs=? WHERE keyword="%s"' % keyword, [studentIDs_line])
             else:
-                studentIDs = []
-                #cursor.execute('INSERT INTO cse_students VALUES(?,?,?,?,?, ?,?,?,?,?)', all_attributes)
-            studentIDs.append(studentID)
-            studentIDs_line = Constants.SPLIT_CHAR.join(studentIDs)
+                cursor.execute('INSERT INTO student_keywords VALUES(?,?)', [keyword, studentID])
+            self.kDB.commit()
+
+    def create_index(self):
+        cursor = self.kDB.cursor()
+        cursor.execute('CREATE INDEX keyword_index on student_keywords(keyword)')
+        self.kDB.commit()
 
 
 def test():
