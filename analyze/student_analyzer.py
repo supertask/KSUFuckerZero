@@ -59,7 +59,7 @@ class StudentAnalyzer(object):
         self.back_studentID = studentID
     
 
-    def analyze_n_save_HTMLs(self):
+    def analyze_HTMLs(self):
         for folder in self.analyzing_folders:
             Tool.search_HTMLs(os.path.join(folder), self.analyze_HTML)
             self.__save_HTML_features()
@@ -100,7 +100,7 @@ class StudentAnalyzer(object):
         self.image_paths.append(image_path)
         self.back_studentID = studentID
 
-    def analyze_n_save_images(self):
+    def analyze_images(self):
         for folder in self.analyzing_folders:
             #print folder, self.analyze_image
             Tool.search_images(os.path.join(folder), self.analyze_image)

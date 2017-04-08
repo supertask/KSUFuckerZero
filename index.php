@@ -119,8 +119,10 @@ while($table_row)
         </div>
         <div class="card-block">
             <a href="student.php?id=<?php echo $studentID; ?>" class="card-link">詳細</a>
+            <!--
             <a href="<?php echo $cse_url; ?>" class="card-link" target="_blank">CSEページ</a>
             <a href="<?php echo $cc_url; ?>" class="card-link" target="_blank">CCページ</a>
+            -->
         </div>
     <!-- .card --></div>
 <?php

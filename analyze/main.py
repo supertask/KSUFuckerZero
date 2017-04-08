@@ -3,7 +3,7 @@
 
 import sys
 from student_downloader import StudentDownloader
-#from student_analyzer import StudentAnalyzer
+from student_analyzer import StudentAnalyzer
 from constants import Constants
 
 def main():
@@ -32,14 +32,14 @@ def main():
     #
     # Download all student data using an estimated student DB above.
     #
-    downloader.download_all()
+    #downloader.download_all()
 
     #
     # Analyze and save downloaded HTMLs into "cse_student_DB.db".
     #
-    #analyzer = StudentAnalyzer()
-    #analyzer.analyze_n_save_HTMLs()
-    #analyzer.analyze_n_save_images()
+    analyzer = StudentAnalyzer()
+    #analyzer.analyze_HTMLs()
+    analyzer.analyze_images()
     #analyzer.create_index_DB()
 
     return Constants.EXIT_SUCCESS
