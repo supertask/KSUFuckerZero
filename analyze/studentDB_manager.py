@@ -47,7 +47,7 @@ class EstimatedStudentDBManager(object):
 
     def get_studentIDs_from(self, begin_sID, end_sID):
         studentIDs = []
-        for studentID_tail in range(int(begin_sID[1:]), int(end_sID[1:])):
+        for studentID_tail in range(int(begin_sID[1:]), int(end_sID[1:])+1):
             studentID = "g" + str(studentID_tail).zfill(7)
             combined_number = sum([int(c) for c in studentID[2:]])
             if combined_number % 10 == 0:

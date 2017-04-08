@@ -25,7 +25,7 @@ def main():
     #estimated_students_db_manager.register_studentIDs_ranging("g1144010", "g1145505") #entrance_year=2011
     #estimated_students_db_manager.label_traced_students_ranging("g1144010", "g1145505", datetime.date(2015,07,14))
     #estimated_students_db_manager.register_studentIDs_ranging("g1244028", "g1245397") #entrance_year=2012
-    #estimated_students_db_manager.register_studentIDs_ranging("g1344018", "g1349032") #entrance_year=2013
+    #estimated_students_db_manager.register_studentIDs_ranging("g1344018", "g1349031") #entrance_year=2013
     #estimated_students_db_manager.register_studentIDs_ranging("g1444026", "g1445539") #entrance_year=2014
     #estimated_students_db_manager.register_studentIDs_ranging("g1540074", "g1545664") #entrance_year=2015
 

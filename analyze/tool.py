@@ -163,7 +163,7 @@ def main():
     tool = Tool()
     #tool.print_popular_urls("www.cse.kyoto-su.ac.jp")
     #tool.print_spam_links_studentIDs("www.cse.kyoto-su.ac.jp")
-    tool.print_spam_code_studentIDs("www.cse.kyoto-su.ac.jp")
+    #tool.print_spam_code_studentIDs("www.cse.kyoto-su.ac.jp")
 
     return Constants.EXIT_SUCCESS
 
