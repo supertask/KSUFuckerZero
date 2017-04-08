@@ -15,7 +15,8 @@
 # BUT, DO NOT FILL IT IN BOTH OF THEM, PLEASE.
 #
 grades = [] #[1,2,3,4,5,6,7,8,9]
-entrance_years = [2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008]
+#entrance_years = [2016, 2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008]
+entrance_years = [2015, 2014, 2013, 2012, 2011, 2010, 2009, 2008]
 
 #
 # Switch 'True' if you want to download student data, again.
