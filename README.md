@@ -1,5 +1,5 @@
 # KSU Fucker
-京都産業大学の学生データベースです。WEBサイト[KSUFucker](http://ksufucker.herokuapp.com/)にアクセスすると、データベース検索が可能です。現段階では、学内のCCドメインから直接画像を読み込んでいるため、アクセス制限によって表示速度が遅いことが多々あります。
+京都産業大学の学生データベースです。WEBサイト[KSUFucker](http://ksufucker.herokuapp.com/)にアクセスすると、データベース検索が可能です。現段階では、学内のCCドメインから直接画像を読み込んでいるため、アクセス制限によって表示速度が遅いことがあります。また、バグが多々あります。
 ![KSU Fucker](./images/ksufucker_screen.png)
 
 
