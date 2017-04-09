@@ -38,9 +38,9 @@ def main():
     #
     # Analyze and save downloaded HTMLs into "cse_student_DB.db".
     #
-    #analyzer = StudentAnalyzer()
-    #analyzer.analyze_n_save_HTMLs()
-    #analyzer.analyze_n_save_images()
+    analyzer = StudentAnalyzer()
+    #analyzer.analyze_HTMLs()
+    analyzer.analyze_images()
     #analyzer.create_index_DB()
 
     return Constants.EXIT_SUCCESS
