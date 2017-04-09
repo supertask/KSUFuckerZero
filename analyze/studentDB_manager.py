@@ -101,7 +101,7 @@ class StudentDBManager(object):
         for row in cursor.fetchall():
             keywords = [str(row[0]), row[1]] + row[2].split(Constants.SPLIT_CHAR) + row[3].split(Constants.SPLIT_CHAR) + row[4].split(Constants.SPLIT_CHAR)
             keywords_db_manager.register(row[1], keywords)
-        keywords_db_manager.create_index()
+        keywords_db_manager.create_index_for_speed()
 
 
     def convert_to_string(self, attributes):
@@ -109,7 +109,7 @@ class StudentDBManager(object):
         """
         return map(lambda x: Tool.conv_encoding(Constants.SPLIT_CHAR.join(x)), attributes)
 
-    def register(self, studentID, firstnames, lastnames, page_keywords, page_titles, page_paths, coding_size):
+    def register_HTML(self, studentID, firstnames, lastnames, page_keywords, page_titles, page_paths, coding_size):
         entrance_year = int('20' + studentID[1:3])
         cursor = self.sDB.cursor()
         cursor.execute('SELECT studentID FROM cse_students WHERE studentID = "%s"' % studentID)
@@ -185,7 +185,7 @@ class KeywordsDBManager(object):
                 cursor.execute('INSERT INTO student_keywords VALUES(?,?)', [keyword, studentID])
             self.kDB.commit()
 
-    def create_index(self):
+    def create_index_for_speed(self):
         cursor = self.kDB.cursor()
         cursor.execute('CREATE INDEX keyword_index on student_keywords(keyword)')
         self.kDB.commit()

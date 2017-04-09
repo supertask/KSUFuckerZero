@@ -32,8 +32,8 @@
 <?php
     $query_search = isset($_GET['search']) ? $_GET['search'] : ""; //search query
     $query_sort_option = isset($_GET['sort-option']) ? intval($_GET['sort-option']) : 0; //HTML size sorting
-    $query_grade_from = isset($_GET['grade-from']) ? intval($_GET['grade-from']) : 2; //sophomore
-    $query_grade_to = isset($_GET['grade-to']) ? intval($_GET['grade-to']) : 9; //senior
+    $query_grade_from = isset($_GET['grade-from']) ? intval($_GET['grade-from']) : 3; //sophomore
+    $query_grade_to = isset($_GET['grade-to']) ? intval($_GET['grade-to']) : 6; //senior
     /*
     echo $query_search . "\n";
     echo $query_sort_option . "\n";
@@ -104,7 +104,7 @@ while($table_row)
         if(empty($css_line)) {
             echo "<img src='" . $image_path . "' style='width:" . $face_width . "px;' />";
         } else {
-            echo "<div style='background-image: url('".$image_path."); style='width:" . $face_width . "px; " . $css_line ."'></div>";
+            echo "<div style='background-image: url(\"".$image_path."\"); width:" . $face_width . "px; " . $css_line ."'></div>";
         }
         ?>
         <div class="card-block">

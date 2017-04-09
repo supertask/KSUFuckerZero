@@ -112,10 +112,11 @@ function get_face_css($width) {
     list($face_path, $face_rect) = get_face();
     $css_line = "";
     if (empty($face_path)) { return array("./images/no-user.gif", $css_line); }
+    /*
     if ($face_rect) {
         //$width = 300; // 固定
         //$face_path = "http://" . $face_path;
-        $image_size = getimagesize($face_path); #Call a local image(SOS!!!!!!!!!!!!!!!)
+        //$image_size = getimagesize($face_path); #Call a local image(SOS!!!!!!!!!!!!!!!)
         $face_position = array($face_rect[0], $face_rect[1]);
         $face_size = array($face_rect[2], $face_rect[3]);
 
@@ -127,6 +128,7 @@ function get_face_css($width) {
         $bg_size = array($image_size[0] * $ratio, $image_size[1] * $ratio);
         $css_line = sprintf("background-position: %dpx %dpx; background-size:%dpx %dpx; height: %dpx;", (int)$bg_position[0], (int)$bg_position[1], (int)$bg_size[0], (int)$bg_size[1], (int)$height);
     }
+    */
     return array("http://".$face_path, $css_line);
 }
 

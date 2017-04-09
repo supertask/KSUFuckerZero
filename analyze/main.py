@@ -40,8 +40,8 @@ def main():
     #
     analyzer = StudentAnalyzer()
     #analyzer.analyze_HTMLs()
-    analyzer.analyze_images()
-    #analyzer.create_index_DB()
+    #analyzer.analyze_images()
+    analyzer.create_index_DB()
 
     return Constants.EXIT_SUCCESS
 
