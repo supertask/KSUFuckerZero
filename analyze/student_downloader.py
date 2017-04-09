@@ -84,14 +84,15 @@ class StudentDownloader(object):
             page_2 = os.path.join(student_path, "index-j.html")
             if os.path.isfile(page_1) and os.path.isfile(page_2):
                 is_delete = filecmp.cmp(page_1, index_page) and filecmp.cmp(page_2, index_page)
+                print filecmp.cmp(page_1, index_page), filecmp.cmp(page_2, index_page)
                 if is_delete:
                     shutil.rmtree(student_path)
 
-    def download_from_urls(self, urls, student_ID):
+    def download_from_urls(self, urls, student_ID, options=[]):
         for url in urls:
             url = url % student_ID 
             print student_ID, url
-            shell_line = ["wget", "-r", "--random-wait", "--exclude-directories=%s" % dlconfig.get_exclude_dirs(), url]
+            shell_line = ["wget", "-r", "--random-wait", "--exclude-directories=%s" % dlconfig.get_exclude_dirs(), url] + options
             subprocess.call(shell_line)
 
     #Phase 1
@@ -109,20 +110,26 @@ class StudentDownloader(object):
         MIN_10, MIN_20 = 60 * 10, 60 * 20
         for grade, studentID in students:
             if  time.time() - start > MIN_20:
+                print "wait.............." 
                 time.sleep(MIN_10) #10min
                 start = time.time()
-            self.download_from_urls(Constants.URLS_FOR_DETERMINING_STUDENT_ID, studentID)
+            #self.download_from_urls(Constants.URLS_FOR_DETERMINING_STUDENT_ID, studentID, options=["--timeout", "300"])
 
-        matcher = Constants.DOMAIN_RE.search(URLS_FOR_DETERMINING_STUDENT_ID[0])
-        CC_URL = matcher.group(1)
-        self.db_manager.register_estimated_studentIDs(CC_URL) #Important!
-        self.clean_garbage_pages(CC_URL, Constants.KSU_TEMPLATE_INDEX)
+        #self.db_manager.register_estimated_studentIDs(Constants.CC_DOMAIN) #Important!
+        self.clean_garbage_pages(Constants.CC_DOMAIN, Constants.KSU_TEMPLATE_INDEX)
 
     #Phase2
     def download_all(self):
         students = self.db_manager.get_not_traced_students_yet()
         studentIDs = []
+        start = time.time()
+        MIN_10, MIN_20 = 60 * 10, 60 * 20
+
         for grade, studentID in students:
+            if  time.time() - start > MIN_20:
+                print "wait.............." 
+                time.sleep(MIN_10) #10min
+                start = time.time()
             self.download_from_urls(dlconfig.get_urls(grade), studentID)
             studentIDs.append(studentID)
         self.db_manager.label_traced_students(studentIDs, Constants.TODAY)

@@ -3,12 +3,13 @@
 
 import sys
 from student_downloader import StudentDownloader
-#from student_analyzer import StudentAnalyzer
+from student_analyzer import StudentAnalyzer
 from constants import Constants
+import datetime
 
 def main():
     """Run an example for a studentIDGetter class."""
-    downloader = StudentDownloader()
+    #downloader = StudentDownloader()
 
     #
     # Use it if you want to create an estimated student DB automatically.
@@ -27,12 +28,12 @@ def main():
     #estimated_students_db_manager.register_studentIDs_ranging("g1244028", "g1245397") #entrance_year=2012
     #estimated_students_db_manager.register_studentIDs_ranging("g1344018", "g1349031") #entrance_year=2013
     #estimated_students_db_manager.register_studentIDs_ranging("g1444026", "g1445539") #entrance_year=2014
-    #estimated_students_db_manager.register_studentIDs_ranging("g1540074", "g1545664") #entrance_year=2015
+    #estimated_students_db_manager.register_studentIDs_ranging("g1540074", "g1547932") #entrance_year=2015
 
     #
     # Download all student data using an estimated student DB above.
     #
-    downloader.download_all()
+    #downloader.download_all()
 
     #
     # Analyze and save downloaded HTMLs into "cse_student_DB.db".

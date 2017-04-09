@@ -57,11 +57,10 @@ class EstimatedStudentDBManager(object):
 
     def get_unknown_grades(self):
         freshman_entrance_year = Constants.get_year(1) #1=freshman
-        oldest_entrance_year = Constants.ENTRANCE_YEAR_OF_OLDEST_OB
 
         unknown_grades = []
         cursor = self.esDB.cursor()
-        for entrance_year in range(oldest_entrance_year, freshman_entrance_year+1):
+        for entrance_year in range(Constants.ENTRANCE_YEAR_OF_OLDEST_OB, freshman_entrance_year+1):
             cursor.execute('SELECT entrance_year FROM cse_students WHERE entrance_year = "%s"' % entrance_year)
             if not cursor.fetchall():
                 unknown_grades.append(Constants.get_grade(entrance_year))

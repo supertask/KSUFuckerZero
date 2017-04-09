@@ -33,7 +33,11 @@ exclude_directories = "~mina,~tamada,~ogihara,~naohaya,~atsushi,~akiyama,~ueda,~
 #
 urls_for_eachyear = [
     #Freshman, first year student
-    None,
+    #None,
+    [
+        "http://www.cc.kyoto-su.ac.jp/~%s/",
+        "http://www.cc.kyoto-su.ac.jp/~%s/index-j.html"
+    ],
 
     #Sophomore, second year student
     None, 
@@ -43,20 +47,20 @@ urls_for_eachyear = [
         # 
         # Links that many of CSE students use for sure.
         #
-        "http://www.cse.kyoto-su.ac.jp/~%s/",
-        "http://www.cse.kyoto-su.ac.jp/~%s/index-j.html",
-        "http://www.cse.kyoto-su.ac.jp/~%s/SouriDaijin/",
-        "http://www.cse.kyoto-su.ac.jp/~%s/PL/",
-        "http://www.cse.kyoto-su.ac.jp/~%s/PL/SouriDaijin/",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/report03.html",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/report04.html",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/report05.html",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/1-3.html",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-1.html",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-2.html",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-4.html",
-        "http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-6.html"
+        #"http://www.cse.kyoto-su.ac.jp/~%s/",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/index-j.html",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/SouriDaijin/",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/PL/",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/PL/SouriDaijin/",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/report03.html",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/report04.html",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/report05.html",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/1-3.html",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-1.html",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-2.html",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-4.html",
+        #"http://www.cse.kyoto-su.ac.jp/~%s/webcom/2-6.html"
 
         # 
         # Links estimated by analyzing websites of many of CSE students.

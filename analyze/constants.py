@@ -22,7 +22,7 @@ class Constants(object):
     CSE_URL_DIR_RE = re.compile("www\.cse\.kyoto-su\.ac\.jp\/.*(g\d{7})\/(.*)")
     CSE_DOMAIN_RE = re.compile("www\.cse\.kyoto-su\.ac\.jp")
 
-    KSU_TEMPLATE_INDEX = "static/ksu_index.html"
+    KSU_TEMPLATE_INDEX = "ksu_index.html"
 
     #
     # 'g'=bachelor or 'i'=master
@@ -40,6 +40,12 @@ class Constants(object):
     # A date object indicated today for timestamp, for instance, '2016-12-25'.
     #
     TODAY = date.today()
+
+    #
+    # Analyzing domain names plus downloaded folder names.
+    #
+    CC_DOMAIN = "www.cc.kyoto-su.ac.jp"
+    CSE_DOMAIN = "www.cse.kyoto-su.ac.jp"
 
     #
     # This URLs is used for determining a student id.
