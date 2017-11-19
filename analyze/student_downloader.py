@@ -9,8 +9,6 @@ import os.path
 import subprocess
 import filecmp
 import shutil
-import datetime
-from datetime import date
 from constants import Constants
 import dlconfig
 from studentDB_manager import EstimatedStudentDBManager
