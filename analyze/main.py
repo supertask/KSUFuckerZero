@@ -8,7 +8,7 @@ from constants import Constants
 import datetime
 
 def main():
-    """Run an example for a studentIDGetter class."""
+    """Run a main program of the KSU Fucker."""
     #downloader = StudentDownloader()
 
     #
