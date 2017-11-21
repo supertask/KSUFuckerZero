@@ -61,11 +61,11 @@ class Constants(object):
     ENTRANCE_YEAR_OF_OLDEST_OB = 2008
 
     #
-    # Database
+    # Tables in database
     #
-    ESTIMATED_CSE_STUDENT_DB = "DB/estimated_cse_student_DB.db"
-    CSE_STUDENT_DB = "DB/cse_student_DB.db"
-    KEYWORDS_DB = "DB/keywords_DB.db"
+    ESTIMATED_STUDENT_TABLE_NAME = "estimated_cse_students"
+    STUDENT_TABLE_NAME = "cse_students"
+    KEYWORDS_TABLE_NAME = "keywords"
 
     #
     # A spliting charactor for a list element of the database

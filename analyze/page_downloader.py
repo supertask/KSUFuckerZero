@@ -11,10 +11,9 @@ import filecmp
 import shutil
 from constants import Constants
 import dlconfig
-from studentDB_manager import EstimatedStudentDBManager
+from estimated_studentDB_manager import EstimatedStudentDBManager
 
-
-class StudentDownloader(object):
+class PageDownloader(object):
     def __init__(self):
         #self.last_student_ID = self.trace_last_student("www.cc.kyoto-su.ac.jp")
         self.db_manager = EstimatedStudentDBManager(Constants.ESTIMATED_CSE_STUDENT_DB)

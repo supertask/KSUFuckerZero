@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from student_downloader import StudentDownloader
+from page_downloader import PageDownloader
 from student_analyzer import StudentAnalyzer
 from constants import Constants
 import datetime
@@ -38,10 +38,10 @@ def main():
     #
     # Analyze and save downloaded HTMLs into "cse_student_DB.db".
     #
-    analyzer = StudentAnalyzer()
+    analyzer = StudentAnalyzer(Constants.STUDENT_TABLE_NAME)
     #analyzer.analyze_HTMLs()
     #analyzer.analyze_images()
-    analyzer.create_index_DB()
+    #analyzer.create_index_DB()
 
     return Constants.EXIT_SUCCESS
 

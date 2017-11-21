@@ -1,42 +1,49 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# KSU Fucker
+# -----------------
+# Author:
+#     Tasuku TAKAHASHI (supertask.jp)
+# Coding style:
+#     Google Python Style Guide
+#     https://google.github.io/styleguide/pyguide.html
+#
 
 import sys
 import os
 import MeCab
-import dlib
 import traceback
 import os.path
-from skimage import io
 from constants import Constants
 from tool import Tool
 from studentDB_manager import StudentDBManager
 from student_html_parser import StudentHTMLParser
 
-import numpy
+# This means someone who has a secret folder can use this package ;)
+from secret.auth import SQLAuth
+
 import subprocess
 
 class StudentAnalyzer(object):
-    def __init__(self):
-        #
-        # To analyze HTMLs
-        #
+    def __init__(self, table_name=Constants.STUDENT_TABLE_NAME):
+        """To analyze HTMLs
+        """
         self.analyzing_folders = Constants.ANALYZING_FOLDERS
-        self.db_manager = StudentDBManager(Constants.CSE_STUDENT_DB)
+        self.db_manager = StudentDBManager(SQLAuth().connection, table_name)
         self.tagger = MeCab.Tagger("-Ochasen")
-        self.content = ""
-        self.back_studentID = ""
-        self.page_titles = []
-        self.page_paths = []
-        self.page_size = 0
-
-        self.image_paths = []
+        self.clear_features()
 
     def get_db_manger(self):
         return db_manager
 
     def clear_features(self):
-        self.__init__()
+        self.content = ""
+        self.back_studentID = ""
+        self.page_titles = []
+        self.page_paths = []
+        self.page_size = 0
+        self.image_paths = []
 
     def __save_HTML_features(self):
         firstnames, lastnames, page_keywords = self.__rank_some_features()
@@ -89,8 +96,9 @@ class StudentAnalyzer(object):
 ##############################################
 
     def __save_image_features(self):
-        paths,face_rects = self.get_faces(self.image_paths)
-        self.db_manager.register_images(self.back_studentID, paths, face_rects)
+        #paths,face_rects = self.get_faces(self.image_paths)
+        #self.db_manager.register_images(self.back_studentID, paths, face_rects)
+        self.db_manager.register_images(self.back_studentID, self.image_paths)
         self.clear_features()
 
 
@@ -117,59 +125,6 @@ class StudentAnalyzer(object):
                 max_rect = rect
         return max_rect
 
-    #Here
-    def get_face(self, image_path):
-        """ Here
-        """
-        img = io.imread(image_path)
-        detector = dlib.get_frontal_face_detector()
-        try:
-            dets, scores, idx = detector.run(img) #frontal_face_detectorクラスは矩形, スコア, サブ検出器の結果を返す
-        except:
-            _, ext = os.path.splitext(image_path)
-            #TODO(Tasuku): create a func for animated gif images
-            if ext.upper() == ".GIF": return None
-            subprocess.call(["convert", image_path, image_path])
-            img = io.imread(image_path)
-            try:
-                dets, scores, idx = detector.run(img)
-            except:
-                print "An error happened by dlib,", image_path
-                traceback.print_exc()
-                sys.exit(Constants.EXIT_FAILURE)
-
-        if len(dets) > 0:
-            face_rects = []
-            for rect in dets:
-                rect = [rect.left(), rect.top(), rect.right()-rect.left(), rect.bottom()-rect.top()]
-                face_rects.append(rect)
-            biggest_face = self.get_biggest_face_of(face_rects)
-            return biggest_face
-        else:
-            return None
-
-
-    def get_faces(self, paths):
-        face_dict = {}
-        pictures = []
-        for path in paths:
-            face = self.get_face(path)
-            if face:
-                padding_px = int(((face[2] * face[3]) ** 0.5) * 0.1)
-                face[0] -= padding_px
-                face[1] -= padding_px
-                face[2] += padding_px * 2
-                face[3] += padding_px * 2
-                face_dict[path] = face
-            else:
-                pictures.append((path, None, ))
-
-        faces = sorted(face_dict.items(), key=lambda x:x[1][2] * x[1][3], reverse=True)
-        faces_n_pictures = faces + pictures
-        paths = [f[0] for f in faces_n_pictures]
-        rects = [f[1] for f in faces_n_pictures]
-        return paths, rects
-
 
 ##############################################
 # keywords from HTML
@@ -181,10 +136,12 @@ class StudentAnalyzer(object):
         self.db_manager.create_index_DB()
 
 
-def test():
-   sa = StudentAnalyzer(analyzing_folders=["www.cse.kyoto-su.ac.jp/","www.cc.kyoto-su.ac.jp/"])
-   paths = ["../images/sample_1.jpg", "../images/sample_3.jpg", "../images/sample_2.jpg"]
-   print sa.get_face_rects(paths)
+def check():
+    analyzer = StudentAnalyzer("cse_students_example")
+    analyzer.analyze_HTMLs()
+    #analyzer.create_index_DB()
+
+    return Constants.EXIT_SUCCESS
 
 if __name__ == '__main__':
-    sys.exit(test())
+    sys.exit(check())
