@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+# KSU Fucker
+# -----------------
+# Author:
+#     Tasuku TAKAHASHI (supertask.jp)
+# Coding style:
+#     Google Python Style Guide
+#     https://google.github.io/styleguide/pyguide.html
+#
 
 import sys
 from page_downloader import PageDownloader

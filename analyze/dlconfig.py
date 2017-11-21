@@ -1,11 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # 
-# This is a download config for collecting data from "cse.kyoto-su.ac.jp".
-# Copyright (c) 2016-2017 Tasuku TAKAHASHI All rights reserved.
+# KSU Fucker
+# -----------------
+# Author:
+#     Tasuku TAKAHASHI (supertask.jp)
+# Coding style:
+#     Google Python Style Guide
+#     https://google.github.io/styleguide/pyguide.html
 #
-# TODO(Tasuku): remove all .DS_Store.
-########################################################
+
+
+"""This is a download config for collecting data from "cse.kyoto-su.ac.jp"."""
 
 #
 # Grades or entrance years that you want to download.
