@@ -117,6 +117,7 @@ class StudentDBManager(object):
         cursor.execute(update_head + 'image_links=%s,faceimage_position=%s WHERE studentID = %s', updating_attributes + [studentID])
         self.DB.commit()
 
+    #TODO(Tasuku): Needs to have studentID who starts as input
     def create_index_DB(self):
         """Creates an index database dictionary for a searching system."""
         keywords_db_manager = KeywordsDBManager(SQLAuth().connection, Constants.KEYWORDS_TABLE_NAME)

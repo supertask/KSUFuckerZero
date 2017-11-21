@@ -26,7 +26,7 @@
     #$output = shell_exec("ls");
     $command = '';
     if(isset($_POST['step1'])) {
-        $command = 'python main.py step1';
+        $command = '/opt/local/bin/python main.py step1';
     }
     else if(isset($_POST['step2'])) {
         $command = 'python main.py step2';
@@ -40,6 +40,7 @@
     else {
         $disabled = "";
     }
+    #$output .= shell_exec("{$command}  2>&1");
     $output .= shell_exec("{$command}  2>&1");
 ?>
 

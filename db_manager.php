@@ -116,7 +116,7 @@ function get_face_css($width) {
     if ($face_rect) {
         //$width = 300; // 固定
         //$face_path = "http://" . $face_path;
-        //$image_size = getimagesize($face_path); #Call a local image(SOS!!!!!!!!!!!!!!!)
+        //$image_size = getimagesize($face_path); #Call a local image(SOS!!!!!)
         $face_position = array($face_rect[0], $face_rect[1]);
         $face_size = array($face_rect[2], $face_rect[3]);
 

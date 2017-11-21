@@ -1,1 +1,2 @@
-g0846039にて、URLのリンクが矛盾している
+g1545619において
+mysql.connector.errors.ProgrammingError: 1170 (42000): BLOB/TEXT column 'keyword' used in key specification without a key length
