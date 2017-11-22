@@ -13,10 +13,11 @@
 import sys
 from page_downloader import PageDownloader
 from student_analyzer import StudentAnalyzer
+from uploader import Uploader
 from constants import Constants
 import datetime
 
-commands = ["download_all", "analyze_HTMLs", "create_index_DB"]
+commands = ["download_all", "upload_to_s3", "analyze_HTMLs", "create_index_DB"]
 
 def help():
     print "SYNOPSIS"
@@ -59,6 +60,10 @@ def main():
     if cmd == "download_all":
         downloader = PageDownloader()
         downloader.download_all()
+    elif cmd == "upload_to_s3":
+        u = Uploader()
+        u.run(CC_DOMAIN)
+        u.run(CSE_DOMAIN)
 
     #
     # Analyze and save downloaded HTMLs into "cse_student_DB.db".

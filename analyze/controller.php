@@ -16,7 +16,7 @@
     $pypath = apache_getenv('PY_PATH');
     $cmd_line = $pypath . ' main.py ';
 
-    $commands = array('download_all', 'analyze_HTMLs', 'create_index_DB');
+    $commands = array('download_all', 'upload_to_s3', 'analyze_HTMLs', 'create_index_DB');
     $disabled = ""; 
     foreach ($commands as $cmd) {
         if (isset($_POST[$cmd])) {
@@ -32,11 +32,13 @@
             <h1>Controller</h1>
             <form action="controller.php" method="post">
                 <button class="btn btn-primary" name="download_all" type="submit" <?php echo $disabled ?>>
-                1. 全CSE学生のページをS3へ保存 </button>
+                1. 全CSE学生のページをダウンロード</button>
+                <button class="btn btn-primary" name="upload_to_s3" type="submit" <?php echo $disabled ?>>
+                2. 全CSE学生のページをS3へ保存</button>
                 <button class="btn btn-primary" name="analyze_HTMLs" type="submit" <?php echo $disabled ?>>
-                2. HTMLを解析</button>
+                3. HTMLを解析</button>
                 <button class="btn btn-primary" name="create_index_DB" type="submit" <?php echo $disabled ?>>
-                3. インデックス化</button>
+                4. インデックス化</button>
                 <div style="margin-top:20px">
                     <textarea class="form-control" rows="3" style="height:400px;"><?php
                         if( ($fp = popen($cmd_line, "r")) ) {
