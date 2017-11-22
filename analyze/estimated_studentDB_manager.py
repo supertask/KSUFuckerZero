@@ -16,7 +16,7 @@ from constants import Constants
 from tool import Tool
 
 # This means someone who has a secret folder can use this package ;)
-from secret.auth import SQLAuth
+from db_auth import SQLAuth
 
 class EstimatedStudentDBManager(object):
     """ A database manager for storing estimated students.

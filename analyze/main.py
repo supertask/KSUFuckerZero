@@ -16,10 +16,23 @@ from student_analyzer import StudentAnalyzer
 from constants import Constants
 import datetime
 
+commands = ["download_all", "analyze_HTMLs", "create_index_DB"]
+
+def help():
+    print "SYNOPSIS"
+    print ' '*4 + "python main.py <command>"
+    print "COMMANDS"
+    for cmd in commands:
+        print ' '*4 + cmd
+
 def main():
     """Run a main program of the KSU Fucker."""
-    #downloader = StudentDownloader()
-
+    if len(sys.argv) < 2:
+        help()
+        return Constants.EXIT_SUCCESS
+    cmd = sys.argv[1]
+    
+    #downloader = PageDownloader()
     #
     # Use it if you want to create an estimated student DB automatically.
     #
@@ -39,18 +52,24 @@ def main():
     #estimated_students_db_manager.register_studentIDs_ranging("g1444026", "g1445539") #entrance_year=2014
     #estimated_students_db_manager.register_studentIDs_ranging("g1540074", "g1547932") #entrance_year=2015
 
+
     #
     # Download all student data using an estimated student DB above.
     #
-    #downloader.download_all()
+    if cmd == "download_all":
+        downloader = PageDownloader()
+        downloader.download_all()
 
     #
     # Analyze and save downloaded HTMLs into "cse_student_DB.db".
     #
-    analyzer = StudentAnalyzer(Constants.STUDENT_TABLE_NAME)
-    #analyzer.analyze_HTMLs()
-    #analyzer.analyze_images()
-    #analyzer.create_index_DB()
+    elif cmd == "analyze_HTMLs":
+        analyzer = StudentAnalyzer(Constants.STUDENT_TABLE_NAME)
+        analyzer.analyze_HTMLs()
+        #analyzer.analyze_images()
+    elif cmd == "create_index_DB":
+        analyzer = StudentAnalyzer(Constants.STUDENT_TABLE_NAME)
+        analyzer.create_index_DB()
 
     return Constants.EXIT_SUCCESS
 

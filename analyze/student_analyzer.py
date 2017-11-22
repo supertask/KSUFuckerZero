@@ -21,7 +21,7 @@ from studentDB_manager import StudentDBManager
 from student_html_parser import StudentHTMLParser
 
 # This means someone who has a secret folder can use this package ;)
-from secret.auth import SQLAuth
+from db_auth import SQLAuth
 
 import subprocess
 

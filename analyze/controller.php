@@ -1,13 +1,3 @@
-<!--
-
-
-
-    セキュリティ的に問題が出るので，今回はGive up
-
-
-
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,27 +11,19 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
 </head>
 
-
 <?php
-    #$output = shell_exec("ls");
-    $command = '';
-    if(isset($_POST['step1'])) {
-        $command = '/opt/local/bin/python main.py step1';
+    set_time_limit(100000);
+    $pypath = apache_getenv('PY_PATH');
+    $cmd_line = $pypath . ' main.py ';
+
+    $commands = array('download_all', 'analyze_HTMLs', 'create_index_DB');
+    $disabled = ""; 
+    foreach ($commands as $cmd) {
+        if (isset($_POST[$cmd])) {
+            $cmd_line .= $cmd;
+            $disabled = "disabled"; 
+        }
     }
-    else if(isset($_POST['step2'])) {
-        $command = 'python main.py step2';
-    }   
-    else if(isset($_POST['step3'])) {
-        $command = 'python main.py step2';
-    }   
-    else if(isset($_POST['step4'])) {
-        $command = 'python main.py step2';
-    }   
-    else {
-        $disabled = "";
-    }
-    #$output .= shell_exec("{$command}  2>&1");
-    $output .= shell_exec("{$command}  2>&1");
 ?>
 
 <body>
@@ -49,16 +31,25 @@
         <div class="card-block">
             <h1>Controller</h1>
             <form action="controller.php" method="post">
-                <button class="btn btn-primary" name="step1" type="submit" <?php echo $disabled ?>>
-                1. 学生証番号を推測 </button>
-                <button class="btn btn-primary" name="step2" type="submit" <?php echo $disabled ?>>
-                2. 全CSE学生のページをS3へ保存 </button>
-                <button class="btn btn-primary" name="step3" type="submit" <?php echo $disabled ?>>
-                3. HTMLを解析</button>
-                <button class="btn btn-primary" name="step4" type="submit" <?php echo $disabled ?>>
-                4. インデックス化</button>
+                <button class="btn btn-primary" name="download_all" type="submit" <?php echo $disabled ?>>
+                1. 全CSE学生のページをS3へ保存 </button>
+                <button class="btn btn-primary" name="analyze_HTMLs" type="submit" <?php echo $disabled ?>>
+                2. HTMLを解析</button>
+                <button class="btn btn-primary" name="create_index_DB" type="submit" <?php echo $disabled ?>>
+                3. インデックス化</button>
                 <div style="margin-top:20px">
-                    <textarea class="form-control" rows="3" style="height:400px;"><?php echo $output ?></textarea>
+                    <textarea class="form-control" rows="3" style="height:400px;"><?php
+                        if( ($fp = popen($cmd_line, "r")) ) {
+                            echo 'Running..\n';
+                            while( !feof($fp) ){
+                                #echo fread($fp, 1024);
+                                echo fread($fp, 104);
+                                flush(); // you have to flush buffer
+                            }
+                            echo "Ended\n";
+                            fclose($fp);
+                        }
+                    ?></textarea>
                 </div>
             </form>
         </div>
