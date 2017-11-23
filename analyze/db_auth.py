@@ -13,6 +13,7 @@
 #     https://qiita.com/Pampus/items/18b45330b990927652fd
 #
 
+import os
 import boto3
 import json
 import mysql
@@ -20,7 +21,7 @@ import mysql.connector
 from mysql.connector.constants import ClientFlag
 
 auth_filename = "auth_info.txt"
-AUTH_SAVED_PATH = '/Users/tasuku/.aws/'
+AUTH_SAVED_PATH = '/' 
 
 class SQLAuth:
     def __init__(self):
