@@ -1,4 +1,7 @@
-・analyze/README.mdにmain.pyの詳しい説明を入れる
+優先
 ・keywordをインデックス化する際のバグを直す
-・S3の画像をPHP側から呼び出す
-    http://d3up5s9mj2aerv.cloudfront.net/tmp/1.jpg
+・クローラーのuploader.pyがhttp経由で実行した時にS3にアップロードされないバグを直す
+
+非優先
+・analyze/README.mdにmain.pyの詳しい説明を入れる
+・コメントをつける＋PHPのコードが凄まじく汚いのでなおす

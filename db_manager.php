@@ -3,6 +3,21 @@
 $SPLIT_CHAR = ",";
 
 
+function get_PDO() {
+    $dbhost = apache_getenv('DB_HOST');
+    $dbname = apache_getenv('DB_NAME');
+    $dsn = 'mysql:host='.$dbhost.';dbname='.$dbname.';charset=utf8mb4';
+    $user = apache_getenv('DB_USERNAME');
+    $password = apache_getenv('DB_PASSWORD');
+    $options = array(
+        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
+        PDO::MYSQL_ATTR_SSL_CA => 'analyze/secret/rds-combined-ca-bundle.pem' // CA証明書の指定
+    );
+    $dbh=new PDO($dsn, $user, $password);
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    return $dbh;
+}
+
 /**
  * Estimates a grade from an entrance year using a date.
  *
@@ -30,17 +45,7 @@ function get_grade($year) { return get_freshman_year() - $year + 1; }
 function get_entrance_year($grade) { return get_freshman_year() - $grade + 1; }
 
 function get_students_table($grade_from, $grade_to, $sort_option, $search) {
-    $dbhost = apache_getenv('DB_HOST');
-    $dbname = apache_getenv('DB_NAME');
-    $dsn = 'mysql:host='.$dbhost.';dbname='.$dbname.';charset=utf8mb4';
-    $user = apache_getenv('DB_USERNAME');
-    $password = apache_getenv('DB_PASSWORD');
-    $options = array(
-        PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8mb4',
-        PDO::MYSQL_ATTR_SSL_CA => 'analyze/secret/rds-combined-ca-bundle.pem' // CA証明書の指定
-    );
-    $dbh=new PDO($dsn, $user, $password);
-    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $dbh = get_PDO();
     $entrance_year_range = array(get_entrance_year($grade_to), get_entrance_year($grade_from));
     $sql_statement = "SELECT entrance_year,firstnames,lastnames,studentID,page_keywords,image_links,faceimage_position FROM cse_students WHERE ?<=entrance_year AND entrance_year<=?";
 
@@ -80,7 +85,7 @@ function get_students_table($grade_from, $grade_to, $sort_option, $search) {
 }
 
 function get_student_table_in_detail($exec_array) {
-    #$dbh = new PDO("sqlite:analyze/DB/cse_student_DB.db");
+    $dbh = get_PDO();
     $table = $dbh->prepare("SELECT entrance_year,firstnames,lastnames,page_keywords,image_links,faceimage_position,page_titles,page_paths FROM cse_students WHERE studentID = ?");
     $table->execute($exec_array);
     return $table;
@@ -138,7 +143,7 @@ function get_face_css($width) {
         $css_line = sprintf("background-position: %dpx %dpx; background-size:%dpx %dpx; height: %dpx;", (int)$bg_position[0], (int)$bg_position[1], (int)$bg_size[0], (int)$bg_size[1], (int)$height);
     }
     */
-    return array("http://".$face_path, $css_line);
+    return array("http://d3up5s9mj2aerv.cloudfront.net/".$face_path, $css_line);
 }
 
 function test() {

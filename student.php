@@ -48,6 +48,7 @@
 </head>
 <body>
 
+
 <?php
 function is_correct_id() {
     if (isset($_GET["id"]) && preg_match("/([gi][0-9]+)/", $_GET["id"])) return true;
@@ -68,6 +69,7 @@ if (is_correct_id()) {
     }
     Catch(PODException $e) { die("ReadError: ".$e->getMessage()."<br />"); }
 
+    $cloudfront_link = "http://d3up5s9mj2aerv.cloudfront.net/";
     $face_width = 400;
     if(!empty($table_row)) {
         list($firstnames, $lastnames) = get_names();
@@ -107,7 +109,7 @@ if (is_correct_id()) {
                 $counter = 0;
                 foreach ($image_paths as $image_path) {
                     if ($counter++ == 0) continue;
-                    echo "<img class='pic' src='http://" . $image_path . "' />"; //style='width: 320px;'
+                    echo "<img class='pic' src='" . $cloudfront_link . $image_path . "' />"; //style='width: 320px;'
                 }
             ?>
             </div>
