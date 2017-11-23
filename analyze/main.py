@@ -53,7 +53,6 @@ def main():
     #estimated_students_db_manager.register_studentIDs_ranging("g1444026", "g1445539") #entrance_year=2014
     #estimated_students_db_manager.register_studentIDs_ranging("g1540074", "g1547932") #entrance_year=2015
 
-
     #
     # Download all student data using an estimated student DB above.
     #
@@ -62,8 +61,9 @@ def main():
         downloader.download_all()
     elif cmd == "upload_to_s3":
         u = Uploader()
-        u.run(CC_DOMAIN)
-        u.run(CSE_DOMAIN)
+        u.run("tmp")
+        #u.run(Constants.CC_DOMAIN)
+        #u.run(Constants.CSE_DOMAIN)
 
     #
     # Analyze and save downloaded HTMLs into "cse_student_DB.db".
@@ -75,6 +75,8 @@ def main():
     elif cmd == "create_index_DB":
         analyzer = StudentAnalyzer(Constants.STUDENT_TABLE_NAME)
         analyzer.create_index_DB()
+    else:
+        help()
 
     return Constants.EXIT_SUCCESS
 

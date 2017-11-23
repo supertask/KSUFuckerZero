@@ -19,11 +19,23 @@ Usage:
 import os
 import sys
 import boto3
+import botocore.session
+#import pkg_resources
+#print pkg_resources.get_distribution("boto3").version
+#boto3.set_stream_logger()
+
 from constants import Constants
+from botocore.exceptions import ClientError
+
 
 class Uploader:
     def __init__(self):
         s3 = boto3.resource('s3')
+        for bucket in s3.buckets.all():
+            print(bucket.name)
+        #print os.getcwd()
+        #print open("/home/ec2-user/.aws/credentials",'r').read()
+        #print open("/home/ec2-user/.aws/config",'r').read()
         self.bucket = s3.Bucket('fuckin-face-bucket')
         
     def run(self, folder_name):
@@ -40,15 +52,17 @@ class Uploader:
         # upload with metadata and publish
         fc = 0
         for path in self.upload_files(folder_name):
-            print 'Uploading: %s' % path
             a_file = open(path, 'rb')
+            #print "Uploading....."
             self.bucket.put_object(Key=path, Body=a_file)
+            print 'Uploaded %s into S3' % path
             fc += 1
         print '[OK] %s files are uploaded.' % fc
 
     def upload_files(self, basedir):
         parent_dir = os.path.dirname(os.path.realpath(basedir))
         for (path, dirs, files) in os.walk(basedir):
+            #print path
             for fn in files:
                 if fn.startswith('.'):
                     continue
@@ -56,8 +70,12 @@ class Uploader:
                 yield relpath
 
 def main():
-    Uploader().run("tmp")
+    #Uploader().run("tmp")
+    Uploader().run(Constants.CC_DOMAIN)
+    Uploader().run(Constants.CSE_DOMAIN)
+
     return Constants.EXIT_SUCCESS
+
 
 if __name__ == '__main__':
     sys.exit(main())

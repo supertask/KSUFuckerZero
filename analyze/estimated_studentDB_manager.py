@@ -14,8 +14,6 @@ import os
 import sys
 from constants import Constants
 from tool import Tool
-
-# This means someone who has a secret folder can use this package ;)
 from db_auth import SQLAuth
 
 class EstimatedStudentDBManager(object):
@@ -174,6 +172,16 @@ class EstimatedStudentDBManager(object):
         cursor.execute("SELECT entrance_year, studentID FROM %s WHERE ifnull(length(traced_date), 0) = 0"% self.table_name)
         return [[Constants.get_grade(row_line[0]), row_line[1].encode('utf-8')] for row_line in cursor.fetchall()]
 
+
+    def get_students_forcibly(self):
+        """Gets entire student ids
+        Returns:
+            A list of strings of a grade and a student id . (ex. [[10, 'g0811111'],[10, 'g0811003']])
+        """
+        cursor = self.DB.cursor()
+        cursor.execute("SELECT entrance_year, studentID FROM %s" % self.table_name)
+        return [[Constants.get_grade(row_line[0]), row_line[1].encode('utf-8')] for row_line in cursor.fetchall()]
+
     def close(self):
         """Closes the DB connection"""
         self.DB.close()
@@ -181,7 +189,7 @@ class EstimatedStudentDBManager(object):
 
 def check():
     DB = SQLAuth().connection
-    manager = EstimatedStudentDBManager(DB, "estimated_cse_students_example")
+    manager = EstimatedStudentDBManager(DB, Constants.ESTIMATED_STUDENT_TABLE_NAME)
     manager.register_estimated_studentID("g0811111")
     manager.register_estimated_studentID("g1111116")
     from datetime import date

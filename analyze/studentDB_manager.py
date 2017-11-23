@@ -14,8 +14,6 @@ import os
 import sys
 from constants import Constants
 from tool import Tool
-
-# This means someone who has a secret folder can use this package ;)
 from db_auth import SQLAuth
 
 class StudentDBManager(object):
@@ -124,10 +122,11 @@ class StudentDBManager(object):
         cursor = self.DB.cursor()
         cursor.execute('SELECT entrance_year,studentID,firstnames,lastnames,page_keywords,page_titles,page_paths,image_links FROM %s' % self.table_name)
         print "Starts a create index DB function"
+        """
         for row in cursor.fetchall():
-            print str(row[1])
             keywords = [str(row[0]), row[1]] + row[2].split(Constants.SPLIT_CHAR) + row[3].split(Constants.SPLIT_CHAR) + row[4].split(Constants.SPLIT_CHAR)
             keywords_db_manager.register(row[1], keywords)
+        """
         keywords_db_manager.create_index_for_speed()
         keywords_db_manager.close()
 
@@ -186,7 +185,7 @@ class KeywordsDBManager(object):
         """Creates databse index for improving the searching speed.
         """
         cursor = self.DB.cursor()
-        cursor.execute('CREATE INDEX keyword_index ON %s(keyword)' % self.table_name)
+        cursor.execute('CREATE INDEX keyword_index ON %s(keyword(255))' % self.table_name)
         self.DB.commit()
 
     def close(self):

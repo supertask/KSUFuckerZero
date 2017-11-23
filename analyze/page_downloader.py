@@ -21,11 +21,13 @@ import shutil
 from constants import Constants
 import dlconfig
 from estimated_studentDB_manager import EstimatedStudentDBManager
+from db_auth import SQLAuth
 
 class PageDownloader(object):
     def __init__(self):
-        #self.last_student_ID = self.trace_last_student("www.cc.kyoto-su.ac.jp")
-        self.db_manager = EstimatedStudentDBManager(Constants.ESTIMATED_CSE_STUDENT_DB)
+        DB = SQLAuth().connection
+        #self.last_student_ID = self.trace_last_student(Constants.CC_DOMAIN)
+        self.db_manager = EstimatedStudentDBManager(DB, Constants.ESTIMATED_STUDENT_TABLE_NAME)
 
     def get_db_manager(self):
         return self.db_manager
@@ -125,8 +127,11 @@ class PageDownloader(object):
         self.clean_garbage_pages(Constants.CC_DOMAIN, Constants.KSU_TEMPLATE_INDEX)
 
     #Phase2
-    def download_all(self):
-        students = self.db_manager.get_not_traced_students_yet()
+    def download_all(self, is_force=True):
+        if is_force:
+            students = self.db_manager.get_students_forcibly()
+        else:
+            students = self.db_manager.get_not_traced_students_yet()
         studentIDs = []
         start = time.time()
         MIN_10, MIN_20 = 60 * 10, 60 * 20
@@ -140,4 +145,5 @@ class PageDownloader(object):
             studentIDs.append(studentID)
         self.db_manager.label_traced_students(studentIDs, Constants.TODAY)
         print "Finished"
+
 

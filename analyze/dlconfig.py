@@ -41,8 +41,10 @@ urls_for_eachyear = [
     #Freshman, first year student
     #None,
     [
-        "http://www.cc.kyoto-su.ac.jp/~%s/",
-        "http://www.cc.kyoto-su.ac.jp/~%s/index-j.html"
+        #"http://www.cc.kyoto-su.ac.jp/~%s/",
+        #"http://www.cc.kyoto-su.ac.jp/~%s/index-j.html"
+        "http://www.cse.kyoto-su.ac.jp/~%s/",
+        "http://www.cse.kyoto-su.ac.jp/~%s/index-j.html"
     ],
 
     #Sophomore, second year student
