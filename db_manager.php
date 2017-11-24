@@ -71,6 +71,7 @@ function get_students_table($grade_from, $grade_to, $sort_option, $search) {
         }
         $sql_statement .= ' AND studentID IN(';
         foreach ($results as $studentID) {
+	    echo "<script>console.log('". $studentID . "');</script>";
             $sql_statement .= '"' . $studentID . '", ';
         } 
         $sql_statement = rtrim($sql_statement, ', ');

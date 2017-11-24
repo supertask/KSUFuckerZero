@@ -172,7 +172,7 @@ class KeywordsDBManager(object):
                 studentIDs.append(studentID)
                 studentIDs_line = Constants.SPLIT_CHAR.join(set(studentIDs))
                 update_head = 'UPDATE %s SET ' % self.table_name
-                cursor.execute(update_head + 'studentIDs=%s WHERE keyword="%s"', (studentIDs_line, keyword))
+                cursor.execute(update_head + 'studentIDs=%s WHERE keyword=%s', (studentIDs_line, keyword))
             else:
                 insert_head = 'INSERT INTO %s VALUES' % self.table_name
                 cursor.execute(insert_head + '(%s,%s)', (keyword, studentID))
