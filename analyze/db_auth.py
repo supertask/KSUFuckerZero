@@ -21,7 +21,7 @@ import mysql.connector
 from mysql.connector.constants import ClientFlag
 
 auth_filename = "auth_info.txt"
-AUTH_SAVED_PATH = '/' 
+AUTH_SAVED_PATH = '/Users/tasuku/.aws/' 
 
 class SQLAuth:
     def __init__(self):
