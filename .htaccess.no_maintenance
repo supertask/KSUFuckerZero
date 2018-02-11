@@ -1,7 +1,7 @@
-ErrorDocument 503 /maintenance.html
+ErrorDocument 503 /maintenance/maintenance.html
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-  RewriteCond %{REQUEST_URI} !=/maintenance.html
+  RewriteCond %{REQUEST_URI} !=/maintenance/maintenance.html
   RewriteRule ^.*$ - [R=503,L]
 </IfModule>
