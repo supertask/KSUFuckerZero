@@ -1,5 +1,0 @@
-MeCab
-dlib
-skimage
-numpy
-scipy
