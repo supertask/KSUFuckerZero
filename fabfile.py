@@ -9,8 +9,11 @@
 # Required:
 #   $ sudo pip install fabric
 #   $ sudo vim httpd.conf
+#       Set paths of DocumentRoot and Directory indicate your workspace.
 #       AllowOverride None -> AllowOverride All
-#   $ sudo service httpd restart
+#       Make sure that rewrite_module is commented out.
+#           LoadModule rewrite_module modules/mod_rewrite.so
+#   $ sudo service httpd start
 #   $ fab deploy or sudo /usr/local/bin/fab deploy
 #
 # BTW, I am following Google Python Style Guide bellow as writting this cool code:
@@ -23,19 +26,7 @@ import os
 import shutil
 from fabric.api import task, run, local, cd
 
-WORKSPACE = '/var/lib/jenkins/workspace/'
-#WORKSPACE = '/Users/tasuku/Sites/'
-
-DEPLOY_DIR = WORKSPACE + 'KSUFuckerZero/'
 EX_HTACCESS = '.htaccess.no_maintenance'
-
-#@task
-#def prepare():
-#    """Prepares for showing a maintenace page.
-#    """
-#    #Copies a maintainance page in the deploy dir into the workspace.
-#    shutil.copyfile(DEPLOY_DIR + 'maintenance/maintenance.html',
-#        WORKSPACE + 'maintenance.html')
 
 def enable_maintenance():
     shutil.copyfile(EX_HTACCESS, '.htaccess') #.htaccess is const value
@@ -48,10 +39,10 @@ def deploy():
     """Deploys the product after enabling the maintenance page.
     """
     enable_maintenance()
-    with cd(DEPLOY_DIR):
-        #Pulls a master branch at this time
-        local('git checkout master')
-        local('git pull origin master')
+
+    #Pulls a master branch at this time
+    local('git checkout master')
+    local('git pull origin master')
     print 'sleeping...'
     import time
     time.sleep(5) #Faked maintenance time FOR TEST
