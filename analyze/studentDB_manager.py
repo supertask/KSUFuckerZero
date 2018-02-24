@@ -33,7 +33,7 @@ class StudentDBManager(object):
         cursor.execute('CREATE TABLE IF NOT EXISTS %s(entrance_year SMALLINT, studentID VARCHAR(12), firstnames TEXT, lastnames TEXT, page_keywords TEXT, page_titles TEXT, page_paths TEXT, image_links TEXT, faceimage_position TEXT, coding_size INT)' % self.table_name)
 
 
-    def __convert_to_string(self, attributes):
+    def __get_comma_line_on_each(self, attributes):
         """Encodes charactors and converts from list to string.
         Args:
             attributes: A list of a list of strings like above.
@@ -67,26 +67,23 @@ class StudentDBManager(object):
         cursor = self.DB.cursor()
         cursor.execute('SELECT studentID FROM %s WHERE studentID = "%s"' % (self.table_name, studentID))
         some_attributes = [firstnames, lastnames, page_keywords]
+        #print some_attributes #ここまではOK
 
         if cursor.fetchall():
+            # Second insert or more
             cursor.execute('SELECT firstnames,lastnames,page_keywords,page_titles,page_paths,coding_size FROM %s WHERE studentID = "%s"' % (self.table_name, studentID))
-            updating_attributes = list(cursor.fetchall()[0])
+            updating_attributes = list(cursor.fetchall()[0]) #One result, all the time
 
-            for i in range(len(some_attributes)):
-                if updating_attributes[i]:
-                    some_attributes[i] = set(map(Tool.conv_encoding, some_attributes[i]))
-                    attr = set(updating_attributes[i].split(Constants.SPLIT_CHAR)) | some_attributes[i]
-                    updating_attributes[i] = Constants.SPLIT_CHAR.join(attr)
-                else:
-                    some_attributes = self.__convert_to_string(some_attributes)
-                    updating_attributes[i] = some_attributes[i]
+            some_attributes += [page_titles, page_paths]
+            updating_attributes = self.__get_comma_line_on_each(some_attributes) + [coding_size]
+            #for s in updating_attributes: print s
 
-            updating_attributes[len(some_attributes):] = self.__convert_to_string([page_titles, page_paths]) + [coding_size]
             update_head = 'UPDATE %s SET ' % self.table_name
             cursor.execute(update_head + 'firstnames=%s,lastnames=%s,page_keywords=%s,page_titles=%s,page_paths=%s,coding_size=%s WHERE studentID = %s', updating_attributes + [studentID])
         else:
+            # First insert
             some_attributes += [page_titles, page_paths]
-            some_attributes = self.__convert_to_string(some_attributes)
+            some_attributes = self.__get_comma_line_on_each(some_attributes)
             all_attributes = [entrance_year, studentID] + some_attributes + [None, None, coding_size]
             insert_head = 'INSERT INTO %s VALUES' % self.table_name
             cursor.execute(insert_head + '(%s,%s,%s,%s,%s, %s,%s,%s,%s,%s)', all_attributes)

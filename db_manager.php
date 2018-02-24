@@ -1,6 +1,7 @@
 <?php
 
 $SPLIT_CHAR = ",";
+$IMAGE_SEARCH_API_KEY = "AIzaSyC0-9IjrXpp4Nb6L72uQjxfZeMJ5yXZF80";
 
 
 function get_PDO() {
