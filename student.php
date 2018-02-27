@@ -43,6 +43,17 @@
                 isAnimated: true
             });
         });
+
+
+        $(window).resize(function(){ resizer("#sns_pictures_flame #sns_pictures img.pic",150,250); });
+        $(window).on('load', function() {
+            resizer("#sns_pictures_flame #sns_pictures img.pic",150,250);
+            $('#sns_pictures').masonry({
+                itemSelector: '.pic',
+                isFitWidth: true,
+                isAnimated: true
+            });
+        });
     </script>
 
 </head>
@@ -59,7 +70,7 @@ function show_alert($error_name, $error_detail) {
 }
 
 if (is_correct_id()) {
-    include ("db_manager.php");
+    include ("lib/db_manager.php");
     $studentID = $_GET["id"];
     $table = NULL;
     $table_row = NULL;
@@ -92,7 +103,7 @@ if (is_correct_id()) {
             </div>
 
             <div id="student-info" >
-                <h1><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h4>
+                <h1><?php echo $lastnames[0].' '.$firstnames[0]; ?> (<?php echo $studentID; ?>)</h1>
                 <div id="tags">
                     <?php
                     foreach ($top_keywords as $keyword) {
@@ -129,6 +140,26 @@ if (is_correct_id()) {
                 echo "<button type='button' class='page btn btn-warning' formtarget='_blank' onclick=\"window.open('http://" . $path . "');\">" . $title . "</button>"; //style='width: 320px;'
             }
         ?>
+        </div>
+
+
+        <?php
+            include("lib/social_manager.php");
+            $manager = new SocialManager($firstnames, $lastnames, $top_keywords);
+        ?>
+        <h2>Related to.. (Look at <?php echo $manager->get_facebook_searching_link(); ?>, <?php echo $manager->get_google_searching_link(); ?>)</h2>
+        <div id="sns_pictures_flame">
+            <div id="sns_pictures">
+            <?php
+                if (empty($firstnames[0]) || empty($lastnames[0])) {
+                    $manager->search_on_google($top_keywords);
+                }
+                else {
+                    //When firstname and lastname exist
+                    $manager->search($firstnames[0], $lastnames[0], $top_keywords);
+                }
+            ?>
+            </div>
         </div>
 <?php
     }

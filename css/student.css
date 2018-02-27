@@ -11,21 +11,23 @@ header #student-info #tags {
     padding: 10px 5px;
 }
 
-#pictures_flame {
+#pictures_flame,
+#sns_pictures_flame {
     width: 100%;
     background-color: #999;
     border-top: 15px solid rgb(2, 117, 216);
-    
 }
-#pictures_flame #pictures {
+#pictures_flame #pictures,
+#sns_pictures_flame #sns_pictures {
 }
-#pictures_flame #pictures img.pic {
+#pictures_flame #pictures img.pic,
+#sns_pictures_flame #sns_pictures img.pic {
 }
 
 #pages {
     margin-top: 20px;
     padding: 0px 12px;
-    margin-bottom: 70px;
+    margin-bottom: 30px;
 }
 #pages .page {
     white-space: normal;
