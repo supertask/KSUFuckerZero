@@ -76,7 +76,7 @@
 
 <div id="ksu_result">
 <?php
-include ("lib/db_manager.php");
+include ("php/db_manager.php");
 $table = NULL;
 $table_row = NULL;
 

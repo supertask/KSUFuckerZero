@@ -1,0 +1,7 @@
+{
+  "require" : {
+    "facebook/php-sdk-v4" : "~5.0",
+    "odannyc/google-image-search": "^1.0",
+    "ext-pdo_sqlite": "^1.0"
+  }
+}

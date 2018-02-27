@@ -70,7 +70,7 @@ function show_alert($error_name, $error_detail) {
 }
 
 if (is_correct_id()) {
-    include ("lib/db_manager.php");
+    include ("php/db_manager.php");
     $studentID = $_GET["id"];
     $table = NULL;
     $table_row = NULL;
@@ -142,12 +142,11 @@ if (is_correct_id()) {
         ?>
         </div>
 
-
         <?php
-            include("lib/social_manager.php");
+            include("php/social_manager.php");
             $manager = new SocialManager($firstnames, $lastnames, $top_keywords);
         ?>
-        <h2>Related to.. (Look at <?php echo $manager->get_facebook_searching_link(); ?>, <?php echo $manager->get_google_searching_link(); ?>)</h2>
+        <h2 style="margin-left:20px;">Related to.. (Also look at <?php echo $manager->get_facebook_searching_link(); ?>, <?php echo $manager->get_google_searching_link(); ?>)</h2>
         <div id="sns_pictures_flame">
             <div id="sns_pictures">
             <?php

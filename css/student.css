@@ -17,11 +17,9 @@ header #student-info #tags {
     background-color: #999;
     border-top: 15px solid rgb(2, 117, 216);
 }
-#pictures_flame #pictures,
-#sns_pictures_flame #sns_pictures {
-}
-#pictures_flame #pictures img.pic,
-#sns_pictures_flame #sns_pictures img.pic {
+
+#sns_pictures_flame {
+    margin-bottom: 50px;
 }
 
 #pages {
