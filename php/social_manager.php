@@ -13,12 +13,12 @@ class SocialManager {
 
     private $firstnames;
     private $lastnames;
-    private $top_keywords;
+    private $keywords;
 
     private $google_searching_link;
     private $facebook_searching_link;
 
-    public function __construct($firstnames, $lastnames, $top_keywords) {
+    public function __construct($firstnames, $lastnames, $keywords) {
         $this->fbManager = new FBManager();
         $this->gisManager = new GISManager();
 
@@ -30,15 +30,23 @@ class SocialManager {
         }
         $this->firstnames = $firstnames;
         $this->lastnames = $lastnames;
-        $this->top_keywords = $top_keywords;
+        $this->keywords = $keywords;
+        $this->check_arguments();
 
-        if (empty($firstnames[0]) || empty($lastnames[0])) {
-            $this->google_searching_link = '<a href="https://www.google.co.jp/search?q=' . $top_keywords[0] . '" target = "_blank">Google</a>';
+        if (empty($this->firstnames[0]) || empty($this->lastnames[0])) {
+            $this->google_searching_link = '<a href="https://www.google.co.jp/search?q=' . $thsi->keywords[0] . '" target = "_blank">Google</a>';
             $this->facebook_searching_link ='FB'; 
         }
         else {
-            $this->google_searching_link = '<a href="https://www.google.co.jp/search?q=' . $lastnames[0] . $firstnames[0] . '" target = "_blank">Google</a>';
-            $this->facebook_searching_link = '<a href="https://www.facebook.com/search/top/?q=' . $lastnames[0] . $firstnames[0] . '" target = "_blank">FB</a>';
+            $this->google_searching_link = '<a href="https://www.google.co.jp/search?q=' . $this->lastnames[0] . $this->firstnames[0] . '" target = "_blank">Google</a>';
+            $this->facebook_searching_link = '<a href="https://www.facebook.com/search/top/?q=' . $this->lastnames[0] . $this->firstnames[0] . '" target = "_blank">FB</a>';
+        }
+    }
+
+    public function check_arguments() {
+        if (empty($this->keywords)) exit;
+        foreach($this->keywords as $keyword) {
+            if (empty($keyword)) exit;
         }
     }
 
@@ -49,7 +57,7 @@ class SocialManager {
      * Searches photos using Facebook API.
      */
     private function search_on_facebook($ids, $responses) {
-        echo 'FB search: <br />';
+        //echo 'FB search: <br />';
         foreach ($responses as $index => $response) {
             $picture = $response->getGraphUser();
             //echo 'id=' . $ids[$index] . ', url=' . $picture['url'] . '<br />';
@@ -63,7 +71,7 @@ class SocialManager {
      * Searches photos using Google Image Search API.
      */
     public function search_on_google() {
-        echo 'Google search: <br />';
+        //echo 'Google search: <br />';
         $this->gisManager->plot_image($this->keywords[0]);
     }
 

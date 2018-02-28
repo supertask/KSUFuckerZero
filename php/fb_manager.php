@@ -27,19 +27,20 @@ class FBManager {
         }
         catch(\Facebook\Exceptions\FacebookResponseException $e) {
             // When Graph returns an error
-            echo 'Graph returned an error: ' . $e->getMessage();
-            exit;
+            error_log('Graph returned an error: ' . $e->getMessage());
+            return null;
         }
         catch(\Facebook\Exceptions\FacebookSDKException $e) {
             // When validation fails or other local issues
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
-            exit;
+            error_log('Facebook SDK returned an error: ' . $e->getMessage());
+            return null;
         }
         return $userList; 
     }
 
     public function get_user_photos($name) {
         $userList = $this->get_users_from($name);
+        if (is_null($userList)) return array(null, null);
 
         $batch = array();
         $ids = array();
@@ -55,25 +56,17 @@ class FBManager {
             $responses = $this->fb->sendBatchRequest($batch);
         }
         catch(\Facebook\Exceptions\FacebookResponseException $e) {
-            echo 'Graph returned an error: ' . $e->getMessage();
-            exit;
+            error_log('Graph returned an error: ' . $e->getMessage());
+            return array(null, null);
+
         } catch(\Facebook\Exceptions\FacebookSDKException $e) {
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
-            exit;
+            error_log('Facebook SDK returned an error: ' . $e->getMessage());
+            return array(null, null);
         }
 
         foreach($responses as $index => $response) {
             $picture = $response->getGraphUser();
-            //echo $index . '<br />';
-            //echo $picture['url'] . '<br />';
-            //echo $response->isError() . '<br />';
-            if ($response->isError()) {
-                return array(null, null);
-            }
-            else {
-                //echo $picture['url'] . '<br />';
-                //echo $response->isError() . '<br />';
-            }
+            if ($response->isError()) return array(null, null);
         }
 
         return array($ids, $responses);
