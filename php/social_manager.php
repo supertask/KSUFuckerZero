@@ -62,9 +62,9 @@ class SocialManager {
     /*
      * Searches photos using Google Image Search API.
      */
-    public function search_on_google($keywords) {
+    public function search_on_google() {
         echo 'Google search: <br />';
-        $this->gisManager->plot_image($keywords[0]);
+        $this->gisManager->plot_image($this->keywords[0]);
     }
 
     /*
@@ -72,14 +72,14 @@ class SocialManager {
      * on some situations. We use Facebook API if the name exists.
      * If it's not, we use Google Image Search API instead.
      */
-    public function search($firstname, $lastname, $keywords) {
-        $name = $lastname . $firstname; //because this is for only Japanese
+    public function search() {
+        $name = $this->lastnames[0] . $this->firstnames[0]; //because this is for only Japanese
         list($ids, $responses) = $this->fbManager->get_user_photos($name);
 
         if (is_null($responses)) {
             //No response
             //Put Google searching results
-            $this->search_on_google($keywords); 
+            $this->search_on_google(); 
         }
         else {
             $this->search_on_facebook($ids, $responses);

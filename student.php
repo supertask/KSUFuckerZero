@@ -151,11 +151,11 @@ if (is_correct_id()) {
             <div id="sns_pictures">
             <?php
                 if (empty($firstnames[0]) || empty($lastnames[0])) {
-                    $manager->search_on_google($top_keywords);
+                    $manager->search_on_google();
                 }
                 else {
                     //When firstname and lastname exist
-                    $manager->search($firstnames[0], $lastnames[0], $top_keywords);
+                    $manager->search();
                 }
             ?>
             </div>

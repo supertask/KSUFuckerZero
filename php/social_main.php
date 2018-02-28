@@ -10,13 +10,17 @@
 
 <?php
 
+ini_set('display_errors', 1);
+
 include("social_manager.php");
-$firstname = "右";
-$lastname = "高橋";
+$firstnames = array("真輝", "右", "健悟");
+$lastnames = array("小谷", "高橋", "今江");
+//$firstnames = array("健悟");
+//$lastnames = array("今江");
 $keywords = array("テニス", "ソフトウェア");
 
-$manager = new SocialManager();
-$manager->search($firstname, $lastname, $keywords);
+$manager = new SocialManager($firstnames, $lastnames, $keywords);
+$manager->search();
 
 ?>
 

@@ -8,6 +8,7 @@ class FBManager {
     private $fb;
     const MAX_NUM_OF_PICTURE = 5;
 
+
     public function __construct() {
         $this->fb = new Facebook\Facebook([
             'app_id' => apache_getenv('FB_KF_ID'),
