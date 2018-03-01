@@ -13,10 +13,8 @@
 ini_set('display_errors', 1);
 
 include("social_manager.php");
-$firstnames = array("真輝", "右", "健悟");
-$lastnames = array("小谷", "高橋", "今江");
-//$firstnames = array("健悟");
-//$lastnames = array("今江");
+$firstnames = array("右", "真輝", "健悟");
+$lastnames = array("高橋","小谷",  "今江");
 $keywords = array("テニス", "ソフトウェア");
 
 $manager = new SocialManager($firstnames, $lastnames, $keywords);
