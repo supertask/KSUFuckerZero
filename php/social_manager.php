@@ -8,8 +8,8 @@ include ("gis_manager.php");
  * A Facebook API and Google Image Search API Manager Class
  */
 class SocialManager {
-    private $fbManager;
-    private $gisManager;
+    private $fb_manager;
+    private $gis_manager;
 
     private $firstnames;
     private $lastnames;
@@ -19,8 +19,8 @@ class SocialManager {
     private $facebook_searching_link;
 
     public function __construct($firstnames, $lastnames, $keywords) {
-        $this->fbManager = new FBManager();
-        $this->gisManager = new GISManager();
+        $this->fb_manager = new FBManager();
+        $this->gis_manager = new GISManager();
 
         for($i = 0; $i < count($firstnames); $i++) {
             $firstnames[$i] = str_replace('?', '', $firstnames[$i]);
@@ -43,6 +43,10 @@ class SocialManager {
         }
     }
 
+    public function set_max_num_of_pictures($max_num_of_pictures) {
+        $this->fb_manager->set_max_num_of_pictures($max_num_of_pictures);
+    }
+
     public function check_arguments() {
         if (empty($this->keywords)) exit;
         foreach($this->keywords as $keyword) {
@@ -63,7 +67,7 @@ class SocialManager {
             //echo 'id=' . $ids[$index] . ', url=' . $picture['url'] . '<br />';
 
             //良好until here
-            $this->fbManager->plot_image($ids[$index], $picture['url']);
+            $this->fb_manager->plot_image($ids[$index], $picture['url']);
         }
     }
 
@@ -72,7 +76,7 @@ class SocialManager {
      */
     public function search_on_google() {
         //echo 'Google search: <br />';
-        $this->gisManager->plot_image($this->keywords[0]);
+        $this->gis_manager->plot_image($this->keywords[0]);
     }
 
     /*
@@ -81,8 +85,8 @@ class SocialManager {
      * If it's not, we use Google Image Search API instead.
      */
     public function search() {
-        $name = $this->lastnames[0] . $this->firstnames[0]; //because this is for only Japanese
-        list($ids, $responses) = $this->fbManager->get_user_photos($name);
+        $name = $this->lastnames[0] . ' ' . $this->firstnames[0]; //because this is for only Japanese
+        list($ids, $responses) = $this->fb_manager->get_user_photos($name);
 
         if (is_null($responses)) {
             //No response

@@ -6,8 +6,8 @@ require_once __DIR__ . '/vendor/autoload.php'; // change path as needed
  */
 class FBManager {
     private $fb;
-    const MAX_NUM_OF_PICTURE = 5;
-
+    private $max_num_of_pictures;
+    //const MAX_NUM_OF_PICTURE = 5;
 
     public function __construct() {
         $this->fb = new Facebook\Facebook([
@@ -18,12 +18,18 @@ class FBManager {
         ]);
     }
 
+    public function set_max_num_of_pictures($max_num_of_pictures) {
+        $this->max_num_of_pictures = $max_num_of_pictures;
+    }
+
     private function get_users_from($name) {
         try {
             // Get the \Facebook\GraphNodes\GraphUser object for the current user.
             // If you provided a 'default_access_token', the '{access-token}' is optional.
             $response = $this->fb->get('/search?locale=ja_JP&q=' . $name . '&type=user');
+            //var_dump($response);
             $userList = $response->getGraphEdge()->asArray();
+            //var_dump($userList);
         }
         catch(\Facebook\Exceptions\FacebookResponseException $e) {
             // When Graph returns an error
@@ -45,11 +51,12 @@ class FBManager {
         $batch = array();
         $ids = array();
         foreach ($userList as $index => $user) {
-            if ($index >= FBManager::MAX_NUM_OF_PICTURE)
+            if ($index >= $this->max_num_of_pictures)
                 break;
             $request = $this->fb->request('GET', '/'.$user['id'].'/picture?redirect=false&height=150&width=150');
             array_push($batch, $request);
             array_push($ids, $user['id']);
+            //echo $user['id'] . '<br />';
         }
 
         try {

@@ -13,11 +13,14 @@
 ini_set('display_errors', 1);
 
 include("social_manager.php");
-$firstnames = array("右", "真輝", "健悟");
-$lastnames = array("高橋","小谷",  "今江");
+//$firstnames = array("右", "真輝", "健悟");
+//$lastnames = array("高橋","小谷",  "今江");
+$firstnames = array("茜", "真輝", "健悟");
+$lastnames = array("柴田","小谷",  "今江");
 $keywords = array("テニス", "ソフトウェア");
 
 $manager = new SocialManager($firstnames, $lastnames, $keywords);
+$manager->set_max_num_of_pictures(25);
 $manager->search();
 
 ?>
