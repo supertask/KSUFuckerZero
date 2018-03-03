@@ -33,13 +33,24 @@ class SocialManager {
         $this->keywords = $keywords;
         $this->check_arguments();
 
-        if (empty($this->firstnames[0]) || empty($this->lastnames[0])) {
-            $this->google_searching_link = '<a href="https://www.google.co.jp/search?q=' . $thsi->keywords[0] . '" target = "_blank">Google</a>';
-            $this->facebook_searching_link ='FB'; 
+        $gs_url = 'https://www.google.co.jp/search';
+        $fb_url = 'https://www.facebook.com/search/top/';
+        if (empty($firstnames[0]) || empty($lastnames[0])) {
+            if (empty($firstnames[0]) && empty($lastnames[0])) {
+                $query = $keywords[0];
+                $this->google_searching_link = $this->__get_searching_link('Google', $gs_url, $query);
+                $this->facebook_searching_link = 'FB'; 
+            }
+            else {
+                $query = $lastnames[0].' '.$firstnames[0];
+                $this->google_searching_link = $this->__get_searching_link('Google', $gs_url, $query);
+                $this->facebook_searching_link = $this->__get_searching_link('FB', $fb_url, $query);
+            }
         }
         else {
-            $this->google_searching_link = '<a href="https://www.google.co.jp/search?q=' . $this->lastnames[0] . $this->firstnames[0] . '" target = "_blank">Google</a>';
-            $this->facebook_searching_link = '<a href="https://www.facebook.com/search/top/?q=' . $this->lastnames[0] . $this->firstnames[0] . '" target = "_blank">FB</a>';
+            $query = $lastnames[0].' '.$firstnames[0];
+            $this->google_searching_link = $this->__get_searching_link('Google', $gs_url, $query);
+            $this->facebook_searching_link = $this->__get_searching_link('FB', $fb_url, $query);
         }
     }
 
@@ -52,6 +63,11 @@ class SocialManager {
         foreach($this->keywords as $keyword) {
             if (empty($keyword)) exit;
         }
+    }
+
+
+    private function __get_searching_link($link_name, $url, $query) {
+        return '<a href="' .$url. '?q=' .$query. '" target = "_blank">' .$link_name. '</a>';
     }
 
     public function get_facebook_searching_link() { return $this->facebook_searching_link; }
